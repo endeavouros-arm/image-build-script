@@ -1,0 +1,6 @@
+firmware-raspberrypi
+linux-rpi-16k
+linux-rpi-16k-headers
+raspberrypi-bootloader
+raspberrypi-utils
+

@@ -1,2 +1,2 @@
-# image-build-script
-Script to build xz images
+# scripts
+Scripts for generating an EnOS headless server image

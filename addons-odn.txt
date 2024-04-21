@@ -1,0 +1,4 @@
+linux-eos-arm
+linux-eos-arm-headers
+uboot-odroid-n2plus
+odroid-n2-post-install

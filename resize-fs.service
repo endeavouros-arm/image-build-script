@@ -1,0 +1,13 @@
+[Unit]
+Description=Clean-up Script
+After=multi-user.target
+Before=shutdown.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/resize-fs.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

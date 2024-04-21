@@ -1,0 +1,17 @@
+
+[Unit]
+Description=config headless server
+After=getty@tty2.service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/eos-ARM-server-config.sh
+StandardInput=tty
+TTYPath=/dev/tty2
+TTYReset=yes
+TTYVHangup=yes
+
+[Install]
+WantedBy=default.target
