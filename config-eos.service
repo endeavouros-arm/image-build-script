@@ -1,13 +1,13 @@
 
 [Unit]
-Description=config headless server
+Description=config desktop
 After=getty@tty2.service
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/root/eos-ARM-server-config.sh
+ExecStart=/root/config-eos.sh
 StandardInput=tty
 TTYPath=/dev/tty2
 TTYReset=yes

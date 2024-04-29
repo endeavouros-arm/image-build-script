@@ -20,18 +20,18 @@ _partition_RPi4() {
 
 _copy_stuff_for_chroot() {
     mkdir $WORKDIR/MP/home/alarm
-    cp script-image-chroot.sh $WORKDIR/MP/root/
-    cp config-eos.sh $WORKDIR/MP/root/
-    cp resize-fs.service $WORKDIR/MP/root
-    cp resize-fs.sh $WORKDIR/MP/root
-#    cp smb.conf $WORKDIR/MP/home/alarm
-    cp config-eos.service $WORKDIR/MP/home/alarm/
-    cp lsb-release $WORKDIR/MP/home/alarm
-    cp DE-pkglist.txt $WORKDIR/MP/alarm
-    cp os-release $WORKDIR/MP/home/alarm
+    cp $WORKDIR/script-image-chroot.sh $WORKDIR/MP/root/
+    cp $WORKDIR/config-eos.sh $WORKDIR/MP/root/
+    cp $WORKDIR/resize-fs.service $WORKDIR/MP/root
+    cp $WORKDIR/resize-fs.sh $WORKDIR/MP/root
+    cp $WORKDIR/DE-pkglist.txt $WORKDIR/MP/root
+    cp $WORKDIR/smb.conf $WORKDIR/MP/home/alarm
+    cp $WORKDIR/config-eos.service $WORKDIR/MP/home/alarm/
+    cp $WORKDIR/lsb-release $WORKDIR/MP/home/alarm
+    cp $WORKDIR/os-release $WORKDIR/MP/home/alarm
     cp rpi4-config.txt $WORKDIR/MP/home/alarm/
 #    case $PLATFORM in
-#      RPi4)    cp rpi4-config.txt $WORKDIR/MP/home/alarm/ ;;
+#      RPi4)    cp $WORKDIR/MP/home/alarm/ ;;
 #      OdroidN2) cp n2-boot.ini $WORKDIR/MP/home/alarm ;;
 #    esac
     printf "$PLATFORM\n" > platformname
@@ -69,9 +69,12 @@ _install_OdroidN2_image() {
     # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX  
     old=$(cat $WORKDIR/MP/boot/boot.ini | grep root= | awk '{print $3}')
     sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/boot.ini    
-#    dd if=MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
-#    sed -i '/setenv bootargs "root=UUID=/c\setenv bootargs "root=/dev/mmcblk1p2 rootwait rw"' MP/boot/boot.ini
+#    dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
 
+printf "\n\n_install_OdroidN2_image has completed\n"
+read z
+
+#    sed -i '/setenv bootargs "root=UUID=/c\setenv bootargs "root=/dev/mmcblk1p2 rootwait rw"' MP/boot/boot.ini
 }   # End of function _install_OdroidN2_image
 
 
@@ -79,19 +82,13 @@ _install_RPi_image() {
 
     pacstrap -cGM $WORKDIR/MP - < $WORKDIR/ARM-pkglist.txt
     _copy_stuff_for_chroot
-#    case $TYPE in
-#      Rootfs)  sed -i 's/mmcblk0/mmcblk1/' $WORKDIR/MP/etc/fstab
-#               ;;
-#      Image)  _fstab_uuid
-              _fstab_uuid
-              partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
-              uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
-              # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
-              old=$(cat $WORKDIR/MP/boot/cmdline.txt | grep root= | awk '{print $1}')
-              sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/cmdline.txt
-#              ;;
-#    esac
-}  # End of function _install_RPi_image
+    _fstab_uuid
+    partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
+    uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
+    # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
+    old=$(cat $WORKDIR/MP/boot/cmdline.txt | grep root= | awk '{print $1}')
+    sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/cmdline.txt
+}   # End of function _install_RPi_image
 
 #_install_RPi5_image() { 
 #    pacstrap -cGM $WORKDIR/MP - < $WORKDIR/pkglist-rpi5.txt
@@ -347,7 +344,7 @@ Main() {
 
     case $PLATFORM in
       OdroidN2)
-         dd if=MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
+         dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
     esac
 
 #    if $CREATE ; then

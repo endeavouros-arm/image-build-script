@@ -55,9 +55,10 @@ Main() {
    read -d $'\x04' TYPE < "$file"
 
    _check_if_root
-   sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
+#   sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
    sed -i 's|#Color|Color\nILoveCandy|g' /etc/pacman.conf
    sed -i 's|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g' /etc/pacman.conf
+   sed -i '/^\[core\].*/i [endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
 
    useradd -p "alarm" -G users -s /bin/bash -u 1000 "alarm"
    printf "\n${CYAN}Setting root user password...${NC}\n\n"
@@ -67,24 +68,10 @@ Main() {
    sed -i 's|# Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo| Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
    sed -i 's|# Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo| Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
 
-#  case $PLATFORM_NAME in
-#    OdroidN2)
-#               _find_mirrorlist
-#               _find_keyring
-#               pacman -Syy
-#               pacman -R --noconfirm linux-odroid-n2 uboot-odroid-n2
-#               pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers uboot-odroid-n2plus
-#               cp /boot/boot.ini /boot/boot.ini.orig
-#               cp /home/alarm/n2-boot.ini /boot/boot.ini
-#               pacman -R --noconfrm endeavouros-mirrorlist endeavouros-keyring
-#               sed -i '/endeavouros/d' /etc/pacman.conf
-#               sed -i '/SigLevel = PackageRequired/d' /etc/pacman.conf
-#               rm /etc/pacman.d/endeavouros-mirrorlist
-#               ;;
-#     RPi4)     cp /boot/config.txt /boot/config.txt.orig
-#               cp /home/alarm/rpi4-config.txt /boot/config.txt
-#               ;;
-#   esac
+   case $PLATFORM_NAME in
+     RPi4 | RPi5) cp /boot/config.txt /boot/config.txt.orig
+                  cp /home/alarm/rpi4-config.txt /boot/config.txt ;;
+   esac
 
 #   if [ "$TYPE" == "Image" ]; then
       cp /root/resize-fs.service /etc/systemd/system/
@@ -92,8 +79,8 @@ Main() {
       systemctl enable resize-fs.service
 #   fi
 
-#   mkdir -p /etc/samba
-#   cp /home/alarm/smb.conf /etc/samba/
+   mkdir -p /etc/samba
+   cp /home/alarm/smb.conf /etc/samba/
    _finish_up
    printf "\n${CYAN}Exiting arch-chroot${NC}\n"
 }  # end of Main

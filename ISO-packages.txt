@@ -7,6 +7,7 @@ alsa-plugins
 alsa-utils
 arch-install-scripts
 archlinuxarm-keyring
+arc-gtk-theme-eos
 b43-fwcutter
 base
 base-devel

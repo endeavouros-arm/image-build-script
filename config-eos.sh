@@ -177,11 +177,13 @@ _config_etc_hosts() {
 _change_user_alarm() {
     local tmpfile
 
-    printf "\n${CYAN}Delete default username (alarm) and Creating a user...${NC}"
+    printf "\n${CYAN}Delete default username (alarm) and Creating a user...${NC}\n"
     userdel -rf alarm     #delete the default user from the image
     useradd -m -G users -s /bin/bash -u 1000 "$USERNAME"
-    printf "\n${CYAN} Updating user password...\n\n"
+    printf "\n${CYAN} Updating user password...\n"
     echo "${USERNAME}:${USERPASSWD}" | chpasswd
+    printf "$USERNAME  ALL=(ALL:ALL) ALL" >> /etc/sudoers
+    gpasswd -a $USERNAME wheel
 }   # End of function _change_user_alarm
 
 _clean_up() {
@@ -376,58 +378,6 @@ _user_input() {
              finished=0
            fi
        done
-
-#       finished=1
-
-#       description="\n  For better security, change the SSH port\n  to something besides 22\n\n  Enter the desired SSH port between 8000 and 48000"
-
-#       while [ $finished -ne 0 ]
-#       do
-#          SSHPORT=$(whiptail --nocancel  --title "EndeavourOS ARM Setup - Server Configuration"  --inputbox "$description" 12 60 3>&2 2>&1 1>&3)
-
-#          if [ "$SSHPORT" -eq "$SSHPORT" ] # 2>/dev/null
-#          then
-#             if [ $SSHPORT -lt 8000 ] || [ $SSHPORT -gt 48000 ]
-#             then
-#                description="Your choice is out of range, try again.\n\nEnter the desired SSH port between 8000 and 48000"
-#             else
-#                finished=0
-#             fi
-#          else
-#                 description="Your choice is not a number, try again.\n\nEnter the desired SSH port between 8000 and 48000"
-#          fi
-#       done
-
-#       ETHERNETDEVICE=$(ip r | awk 'NR==1{print $5}')
-#       ROUTERIP=$(ip r | awk 'NR==1{print $3}')
-#       THREETRIADS=$ROUTERIP
-#       xyz=${THREETRIADS#*.*.*.}
-#       THREETRIADS=${THREETRIADS%$xyz}
-#       finished=1
-
-#       description="\n  Servers work best with a Static IP address. \n  The first three triads of your router are $THREETRIADS\n  For the best router compatibility, the last triad should be between 120 and 250\n\n  Enter the last triad of the desired static IP address $THREETRIADS"
-#       while [ $finished -ne 0 ]
-#       do
-#          lasttriad=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Server Configuration"  --title "SETTING UP THE STATIC IP ADDRESS FOR THE SERVER" --inputbox "$description" 13 88 3>&2 2>&1 1>&3)
-#          if [ "$lasttriad" -eq "$lasttriad" ] # 2>/dev/null
-#          then
-#             if [ $lasttriad -lt 120 ] || [ $lasttriad -gt 250 ]
-#             then
-#                description="For the best router compatibility, the last triad should be between 120 and 250\n\nEnter the last triad of the desired static IP address $THREETRIADS\n\nYour choice is out of range. Please try again\n"
-#             else
-#                   finished=0
-#             fi
-#          else
-#	         description="For the best router compatibility, the last triad should be between 120 and 250\n\nEnter the last triad of the desired static IP address $THREETRIADS\n\nYour choice is not a number.  Please try again\n"
-#             fi
-#       done
-
-#       STATICIP=$THREETRIADS$lasttriad
-#       STATICIP=$STATICIP"/24"
-
-
-#       if [ "$INSTALLTYPE" == "desktop" ]
-#       then
           DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n                          Choose which Desktop Environment to install\n\n" 22 100 15 \
                "0" "No Desktop Environment" \
                "1" "KDE Plasma" \
@@ -466,40 +416,31 @@ _user_input() {
     done
 }   # end of function _user_input
 
-#   ^^^    SSH Port:  $SSHPORT \n \
-#   ^^^    Static IP: $STATICIP \n\n \
+_desktop_setup() {
+    _change_user_alarm   # remove user alarm and create new user of choice
 
-_find_mirrorlist() {
-    local currentmirrorlist
+printf "\nCompleted function change_user_alarm\n\n"
+read z
 
-    printf "\n${CYAN}Find current endeavouros-mirrorlist...${NC}\n\n"
-    sleep 1
-    currentmirrorlist=$(curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/aarch64 | grep "endeavouros-mirrorlist" | sed s'/^.*endeavouros-mirrorlist/endeavouros-mirrorlist/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | head -1)
+    if [ "$DENAME" != "NONE" ]; then
+        grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
+        printf "${CYAN}Updating base install${NC}\n\n"
+        pacman -Syu
+        printf "${CYAN}Installing $DENAME${NC}\n\n}"
+        pacman -S --needed --noconfirm - < packages
+        rm packages
+    fi
 
-    printf "\n${CYAN}Downloading endeavouros-mirrorlist...${NC}"
-    wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/aarch64/$currentmirrorlist
+printf "\nCompleted installing desktop environment\n"
+read z
 
-    printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
-    pacman -U --noconfirm $currentmirrorlist
-    rm $currentmirrorlist
-    sed -i "s|\[core\]|\[endeavouros\]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n\[core\]|g" /etc/pacman.conf
-}  # end of function _find_mirrorlist
-
-
-_find_keyring() {
-    local currentkeyring
-
-    printf "\n${CYAN}Find current endeavouros-keyring...${NC}\n\n"
-    sleep 1
-    currentkeyring=$(curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/aarch64 | grep endeavouros-keyring | sed s'/^.*endeavouros-keyring/endeavouros-keyring/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | head -1)
-
-    printf "\n${CYAN}Downloading endeavouros-keyring...${NC}"
-    wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/aarch64/$currentkeyring
-
-    printf "\n${CYAN}Installing endeavouros-keyring...${NC}\n"
-    pacman -U --noconfirm $currentkeyring
-    rm $currentkeyring
-}   # End of function _find_keyring
+    case $DENAME in
+       PLASMA | LXQT) systemctl enable sddm.service ;;
+       GNOME)         systemctl enable gdm ;;
+       *)             systemctl enable lightdm ;;
+    esac
+    systemctl enable firewalld
+}   # end of function _desktop_setup
 
 _server_setup() {
     _change_user_alarm    # remove user alarm and create new user of choice
@@ -557,7 +498,7 @@ Main() {
     chvt 2
     TIMEZONE=""
     TIMEZONEPATH=""
-    INSTALLTYPE="server"
+    INSTALLTYPE="desktop"
     USERNAME=""
     HOSTNAME=""
     FULLNAME=""
@@ -579,12 +520,12 @@ Main() {
     sleep 5
     _precheck_setup    # check various conditions before continuing the script
     pacman-key --init
-    pacman-key --populate archlinuxarm
-    _find_mirrorlist
-    _find_keyring
+    pacman-key --populate archlinuxarm endeavouros 
     pacman-key --lsign-key EndeavourOS
     pacman-key --lsign-key builder@archlinuxarm.org
     pacman -Syy
+
+read z
 
     _edit_mirrorlist
     _enable_paralleldownloads
@@ -597,10 +538,12 @@ Main() {
     _config_etc_hosts
     printf "\n${CYAN}Updating root user password...\n\n"
     echo "root:${ROOTPASSWD}" | chpasswd
-
-#    _server_setup
+    if [ "$INSTALLTYPE" == "desktop" ]; then
+       _desktop_setup
+    else
+       _server_setup
+    fi
     eos-rankmirrors
-#    _install_ssd
     _completed_notification
     read -n1 x
     systemctl disable resize-fs.service
@@ -609,7 +552,8 @@ Main() {
     rm /root/resize-fs.sh
     systemctl disable config-server.service
     rm /etc/systemd/system/config-server.service
-    rm /root/eos-ARM-server-config.sh
+    rm /root/config-eos.sh
+    rm /root/DE-pkglist.txt
     systemctl reboot
 }  # end of Main
 
