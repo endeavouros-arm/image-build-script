@@ -155,4 +155,3 @@ xsettingsd
 xterm
 xz
 yay
-

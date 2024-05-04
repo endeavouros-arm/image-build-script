@@ -1,5 +1,29 @@
 #!/bin/bash
 
+_partition_Radxa5b() {
+    dd if=/dev/zero of=$DEVICENAME bs=1M count=18
+    dd if=$WORKDIR/rk3588-uboot.img of=$DEVICENAME
+#    dd if=$WORKDIR/rk3588-uboot.img ibs=1 skip=0 count=15728640 of=$DEVICENAME
+    printf "\n\n${CYAN}36b9ce1a8ebda8e5d03dae8b9be5f361${NC}\n"
+    dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
+    printf "\nBoth check sums should be the same\n\n"
+    parted --script -a minimal $DEVICENAME \
+    mklabel gpt \
+    mkpart primary 17MB 400MB \
+    mkpart primary 400MB $DEVICESIZE"MB" \
+    quit
+}
+
+_partition_Pinebook() {
+    dd if=/dev/zero of=$DEVICENAME bs=1M count=16
+    parted --script -a minimal $DEVICENAME \
+    mklabel msdos \
+    unit mib \
+    mkpart primary fat32 16MiB 400MiB \
+    mkpart primary 400MiB $DEVICESIZE"MiB" \
+    quit
+}
+
 _partition_OdroidN2() {
     parted --script -a minimal $DEVICENAME \
     mklabel msdos \
@@ -29,11 +53,12 @@ _copy_stuff_for_chroot() {
     cp $WORKDIR/config-eos.service $WORKDIR/MP/home/alarm/
     cp $WORKDIR/lsb-release $WORKDIR/MP/home/alarm
     cp $WORKDIR/os-release $WORKDIR/MP/home/alarm
-    cp rpi4-config.txt $WORKDIR/MP/home/alarm/
-#    case $PLATFORM in
-#      RPi4)    cp $WORKDIR/MP/home/alarm/ ;;
-#      OdroidN2) cp n2-boot.ini $WORKDIR/MP/home/alarm ;;
-#    esac
+#    cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm/
+    # install cmdline.txt for function _install_RPi_image
+    case $PLATFORM in
+      RPi4 | RPi5) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm ;;
+      OdroidN2)    cp $WORKDIR/n2-boot.ini $WORKDIR/MP/home/alarm ;;
+    esac
     printf "$PLATFORM\n" > platformname
     cp platformname $WORKDIR/MP/root/
     rm platformname
@@ -57,28 +82,51 @@ _fstab_uuid() {
     printf "$fstabuuid  /boot  vfat  defaults  0  0\n\n" >> $WORKDIR/MP/etc/fstab
 }   # end of fucntion _fstab_uuid
 
+_install_Radxa5b_image() {
+
+    local partition
+    local uuidno
+    local old
+
+    pacstrap -cGM MP - < $WORKDIR/ARM-pkglist.txt
+    _copy_stuff_for_chroot
+    cp -r $WORKDIR/extlinux $WORKDIR/boot/
+    _fstab_uuid
+    # change extlinux.conf to UUID instead of partition label.
+    partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
+    uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
+    # uuidno should now be root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
+    old=$(grep 'root=' $WORKDIR/MP/boot/extlinux/extlinux.conf | awk '{print $2}')
+    sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/extlinux/extlinux.conf
+}   # End of function _install_Radxa5b_image
+
 _install_OdroidN2_image() {
+
+    local partition
+    local uuidno
+    local old
 
     pacstrap -cGM $WORKDIR/MP - < $WORKDIR/ARM-pkglist.txt
     _copy_stuff_for_chroot
     cp $WORKDIR/MP/boot/boot.ini $WORKDIR/MP/boot/boot.ini.orig
     cp $WORKDIR/n2-boot.ini $WORKDIR/MP/boot/boot.ini
     _fstab_uuid
+    # change boot.ini to UUID instead of partition label.
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
-    uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
-    # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX  
-    old=$(cat $WORKDIR/MP/boot/boot.ini | grep root= | awk '{print $3}')
+    uuidno="\"root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
+    # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
+    old=$(grep 'root=' $WORKDIR/MP/boot/boot.ini | awk '{print $3}')
     sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/boot.ini    
 #    dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
-
-printf "\n\n_install_OdroidN2_image has completed\n"
-read z
-
 #    sed -i '/setenv bootargs "root=UUID=/c\setenv bootargs "root=/dev/mmcblk1p2 rootwait rw"' MP/boot/boot.ini
 }   # End of function _install_OdroidN2_image
 
 
 _install_RPi_image() { 
+
+    local partition
+    local uuidno
+    local old
 
     pacstrap -cGM $WORKDIR/MP - < $WORKDIR/ARM-pkglist.txt
     _copy_stuff_for_chroot
@@ -86,7 +134,8 @@ _install_RPi_image() {
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
     uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
     # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
-    old=$(cat $WORKDIR/MP/boot/cmdline.txt | grep root= | awk '{print $1}')
+    old=$(grep 'root=' $WORKDIR/MP/boot/cmdline.txt | awk '{print $1}')
+#    old=$(cat $WORKDIR/MP/boot/cmdline.txt | grep root= | awk '{print $1}')
     sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/cmdline.txt
 }   # End of function _install_RPi_image
 
@@ -125,6 +174,8 @@ _partition_format_mount() {
    case $PLATFORM in   
       RPi4 | RPi5) _partition_RPi4 ;;
       OdroidN2) _partition_OdroidN2 ;;
+      Pinebook) _partition_Pinebook ;;
+      Radxa5b) _partition_Radxa5b ;;
    esac
   
    printf "\n${CYAN}Formatting storage device $DEVICENAME...${NC}\n"
@@ -170,9 +221,11 @@ _create_image(){
     local DEVICENAME
 
     case $PLATFORM in
-       OdroidN2) DEVICENAME="odroid-n2" ;;
        RPi4)     DEVICENAME="rpi4" ;;
        RPi5)     DEVICENAME="rpi5" ;;
+       OdroidN2) DEVICENAME="odroid-n2" ;;
+       Pinebook) DEVICENAME="pbp" ;;
+       Radxa5b)  DEVICENAME="radxa-5b" ;;
     esac
           xz -kvfT0 -2 $WORKDIR/test.img
           cp $WORKDIR/test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-$DEVICENAME-latest.img.xz
@@ -220,7 +273,7 @@ _help() {
    printf "options:\n"
    printf " -h  Print this Help.\n\n"
    printf "These options are required\n"
-   printf " -p  enter platform: rpi4 rpi5 or odn\n"
+   printf " -p  enter platform: rpi4 rpi5 odn pbp or rad\n"
 #   printf " -t  image type: r (for rootfs) or i (for image) \n"
    printf " -c  create image: (y) or n\n"
    printf "example: sudo ./build-server-image-eos.sh -p rpi4 -c y \n"
@@ -273,6 +326,8 @@ _read_options() {
          rpi4) PLATFORM="RPi4" ;;
          rpi5) PLATFORM="RPi5" ;;
          odn) PLATFORM="OdroidN2" ;;
+         pbp) PLATFORM="Pinebook" ;;
+         rad) PLATFORM="Radxa5b" ;;         
      *) PLAT1=true;;
     esac
 
@@ -324,12 +379,16 @@ Main() {
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     cp $WORKDIR/ISO-packages.txt  $WORKDIR/ARM-pkglist.txt
     case $PLATFORM in
-       RPi4)    cat $WORKDIR/addons-rpi4.txt >> $WORKDIR/ARM-pkglist.txt
+       RPi4)     grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_RPi_image ;;
-       RPi5)     cat $WORKDIR/addons-rpi5.txt >> $WORKDIR/ARM-pkglist.txt
+       RPi5)     grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_RPi_image ;;
-       OdroidN2) cat $WORKDIR/addons-odn.txt >> $WORKDIR/ARM-pkglist.txt
+       OdroidN2) grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_OdroidN2_image ;;
+       Pinebook) grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+                 _install_Pinebook_image ;;
+       Radxa5b)  grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+                 _install_Radxa5b_image ;;     
     esac
     rm $WORKDIR/ARM-pkglist.txt
 

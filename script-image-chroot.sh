@@ -29,6 +29,8 @@ _finish_up() {
     sed -i 's/Arch/EndeavourOS/g' /usr/share/factory/etc/issue
     systemctl enable config-eos.service
     systemctl enable NetworkManager
+    systemctl enable systemd-timesyncd
+    systemctl enable firewalld
     printf "\n${CYAN}Ready to create an image.${NC}\n"
 }   # end of function _finish_up
 

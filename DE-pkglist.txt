@@ -16,7 +16,6 @@ PLASMA kdeconnect
 PLASMA kdenetwork-filesharing
 PLASMA kdeplasma-addons
 PLASMA kgamma
-PLASMA khotkeys
 PLASMA kimageformats
 PLASMA kinfocenter
 PLASMA kinit

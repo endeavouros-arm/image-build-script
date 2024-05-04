@@ -418,28 +418,19 @@ _user_input() {
 
 _desktop_setup() {
     _change_user_alarm   # remove user alarm and create new user of choice
-
-printf "\nCompleted function change_user_alarm\n\n"
-read z
-
     if [ "$DENAME" != "NONE" ]; then
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
         printf "${CYAN}Updating base install${NC}\n\n"
-        pacman -Syu
+        pacman -Syu --nocomfirm
         printf "${CYAN}Installing $DENAME${NC}\n\n}"
         pacman -S --needed --noconfirm - < packages
         rm packages
     fi
-
-printf "\nCompleted installing desktop environment\n"
-read z
-
     case $DENAME in
        PLASMA | LXQT) systemctl enable sddm.service ;;
        GNOME)         systemctl enable gdm ;;
        *)             systemctl enable lightdm ;;
     esac
-    systemctl enable firewalld
 }   # end of function _desktop_setup
 
 _server_setup() {
@@ -524,9 +515,6 @@ Main() {
     pacman-key --lsign-key EndeavourOS
     pacman-key --lsign-key builder@archlinuxarm.org
     pacman -Syy
-
-read z
-
     _edit_mirrorlist
     _enable_paralleldownloads
     _user_input
@@ -543,15 +531,15 @@ read z
     else
        _server_setup
     fi
-    eos-rankmirrors
+#    eos-rankmirrors
     _completed_notification
     read -n1 x
     systemctl disable resize-fs.service
     rm /etc/systemd/system/resize-fs.service
     rm /root/resize-fs.service
     rm /root/resize-fs.sh
-    systemctl disable config-server.service
-    rm /etc/systemd/system/config-server.service
+    systemctl disable config-eos.service
+    rm /etc/systemd/system/config-eos.service
     rm /root/config-eos.sh
     rm /root/DE-pkglist.txt
     systemctl reboot
