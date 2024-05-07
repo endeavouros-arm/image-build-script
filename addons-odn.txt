@@ -1,4 +1,0 @@
-linux-aarch64
-linux-aarch64-headers
-uboot-odroid-n2plus
-odroid-n2-post-install
