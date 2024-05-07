@@ -266,7 +266,7 @@ I3WM awesome-terminal-fonts
 I3WM dex
 I3WM dmenu
 I3WM dunst
-I3WM eos-settings-I3WM
+I3WM eos-settings-i3wm
 I3WM endeavouros-xfce4-terminal-colors
 I3WM eos-lightdm-slick-theme
 I3WM eos-qogir-icons

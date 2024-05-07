@@ -27,6 +27,9 @@ _finish_up() {
     cp /home/alarm/os-release /etc/
     sed -i 's/Arch/EndeavourOS/g' /etc/issue
     sed -i 's/Arch/EndeavourOS/g' /usr/share/factory/etc/issue
+    sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" /etc/mkinitcpio.d/*.preset
+#    rm /boot/Image.gz
+#    rm /boot/*fallback.img
     systemctl enable config-eos.service
     systemctl enable NetworkManager
     systemctl enable systemd-timesyncd

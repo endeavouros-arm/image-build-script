@@ -53,8 +53,6 @@ _copy_stuff_for_chroot() {
     cp $WORKDIR/config-eos.service $WORKDIR/MP/home/alarm/
     cp $WORKDIR/lsb-release $WORKDIR/MP/home/alarm
     cp $WORKDIR/os-release $WORKDIR/MP/home/alarm
-#    cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm/
-    # install cmdline.txt for function _install_RPi_image
     case $PLATFORM in
       RPi4 | RPi5) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm ;;
       OdroidN2)    cp $WORKDIR/n2-boot.ini $WORKDIR/MP/home/alarm ;;
@@ -117,8 +115,6 @@ _install_OdroidN2_image() {
     # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
     old=$(grep 'root=' $WORKDIR/MP/boot/boot.ini | awk '{print $3}')
     sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/boot.ini    
-#    dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
-#    sed -i '/setenv bootargs "root=UUID=/c\setenv bootargs "root=/dev/mmcblk1p2 rootwait rw"' MP/boot/boot.ini
 }   # End of function _install_OdroidN2_image
 
 
@@ -135,20 +131,8 @@ _install_RPi_image() {
     uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
     # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
     old=$(grep 'root=' $WORKDIR/MP/boot/cmdline.txt | awk '{print $1}')
-#    old=$(cat $WORKDIR/MP/boot/cmdline.txt | grep root= | awk '{print $1}')
     sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/cmdline.txt
 }   # End of function _install_RPi_image
-
-#_install_RPi5_image() { 
-#    pacstrap -cGM $WORKDIR/MP - < $WORKDIR/pkglist-rpi5.txt
-#    _copy_stuff_for_chroot
-#    _fstab_uuid
-#    partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
-#    uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
-    # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
-#    old=$(cat $WORKDIR/MP/boot/cmdline.txt | grep root= | awk '{print $1}')
-#    sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/cmdline.txt
-#}  # End of function _install_RPi5_image
 
 _partition_format_mount() {
 
@@ -208,13 +192,10 @@ _check_if_root() {
     fi
 }  # end of function _check_if_root
 
-
-
 _arch_chroot(){
     # arch-chroot dir-to-mount file-on-mounted-dir-to-execute
     arch-chroot $WORKDIR/MP /root/script-image-chroot.sh
 }
-
 
 _create_image(){
 
@@ -233,15 +214,6 @@ _create_image(){
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-$DEVICENAME-latest.img.xz > "enosLinuxARM-$DEVICENAME-latest.img.xz.sha512sum"
           cd $WORKDIR
-
-#       RPi4)
-#          xz -kvfT0 -2 $WORKDIR/test.img
-#          cp $WORKDIR/test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosARM-server-rpi4-latest.img.xz
-#          printf "\n\nCreating the image is finished.\nand will calculate a sha512sum\n\n"
-#          cd /home/$USERNAME/endeavouros-arm/test-images/
-#          sha512sum enosARM-server-rpi4-latest.img.xz > "enosARM-server-rpi4-latest.img.xz.sha512sum"
-#          cd $WORKDIR ;;
-
 }  # end of function _create_image
 
 _create_rootfs(){
@@ -278,7 +250,6 @@ _help() {
    printf " -c  create image: (y) or n\n"
    printf "example: sudo ./build-server-image-eos.sh -p rpi4 -c y \n"
    printf "Ensure directory \"/home/$USERNAME/endeavouros-arm/test-images\" exists\n"
-#   printf "Ensure that the directory $IMAGEDIR exists\n\n"
 }
 
 _read_options() {
@@ -377,27 +348,20 @@ Main() {
     rm -rf $WORKDIR/test.img $WORKDIR/test.img.xz
 
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
-    cp $WORKDIR/ISO-packages.txt  $WORKDIR/ARM-pkglist.txt
+    cp $WORKDIR/base-packages.txt  $WORKDIR/ARM-pkglist.txt
     case $PLATFORM in
-       RPi4)     grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+       RPi4)     grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_RPi_image ;;
-       RPi5)     grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+       RPi5)     grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_RPi_image ;;
-       OdroidN2) grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+       OdroidN2) grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_OdroidN2_image ;;
-       Pinebook) grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+       Pinebook) grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_Pinebook_image ;;
-       Radxa5b)  grep -w "$PLATFORM" $WORKDIR/DE-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+       Radxa5b)  grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_Radxa5b_image ;;     
     esac
     rm $WORKDIR/ARM-pkglist.txt
-
-#    case $PLATFORM in
-#       RPi4 | RPi5)   _install_RPi_image ;;
-#       RPi5)    _install_RPi_image ;;
-#       OdroidN2) _install_OdroidN2_image ;;
-#    esac
-
     printf "\n\n${CYAN}arch-chroot for configuration.${NC}\n\n"
     _arch_chroot
 

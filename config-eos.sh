@@ -421,15 +421,19 @@ _desktop_setup() {
     if [ "$DENAME" != "NONE" ]; then
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
         printf "${CYAN}Updating base install${NC}\n\n"
-        pacman -Syu --nocomfirm
+        pacman -Syyu --noconfirm
+printf "\n\nPress Enter\n"
+read z
         printf "${CYAN}Installing $DENAME${NC}\n\n}"
         pacman -S --needed --noconfirm - < packages
         rm packages
+printf "\n\nPress Enter\n"
+read z
     fi
     case $DENAME in
        PLASMA | LXQT) systemctl enable sddm.service ;;
        GNOME)         systemctl enable gdm ;;
-       *)             systemctl enable lightdm ;;
+       XFCE4 | CINNAMON | MATE | BUDGIE | I3WM) systemctl enable lightdm ;;
     esac
 }   # end of function _desktop_setup
 
