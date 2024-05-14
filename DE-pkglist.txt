@@ -3,7 +3,6 @@ PLASMA eos-plasma-sddm-config
 PLASMA eos-settings-plasma
 PLASMA ark
 PLASMA bluedevil
-PLASMA breeze-gtk
 PLASMA dolphin
 PLASMA dolphin-plugins
 PLASMA ffmpegthumbs
@@ -25,7 +24,14 @@ PLASMA kio-fuse
 PLASMA konsole
 PLASMA kscreen
 PLASMA kwallet-pam
+PLASMA kwayland
 PLASMA kwayland-integration
+PLASMA kwayland5
+PLASMA qt5-wayland
+PLASMA qt6-wayland
+PLASMA wayland
+PLASMA wayland-utils
+PLASMA xorg-xwayland
 PLASMA libappindicator-gtk3
 PLASMA okular
 PLASMA plasma
@@ -43,7 +49,6 @@ PLASMA sddm
 PLASMA sddm-kcm
 PLASMA spectacle
 PLASMA xdg-desktop-portal-kde
-PLASMA xsettingsd
 PLASMA xwaylandvideobridge
 
 GNOME arc-gtk-theme-eos
