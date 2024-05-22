@@ -54,7 +54,9 @@ _copy_stuff_for_chroot() {
     cp $WORKDIR/lsb-release $WORKDIR/MP/home/alarm
     cp $WORKDIR/os-release $WORKDIR/MP/home/alarm
     case $PLATFORM in
-      RPi4 | RPi5) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm ;;
+      RPi4) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm ;;
+      RPi5) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm
+            cp $WORKDIR/99-vd3.conf $WORKDIR/MP/etc/X11/xorg.conf.d ;;
       OdroidN2)    cp $WORKDIR/n2-boot.ini $WORKDIR/MP/home/alarm ;;
     esac
     printf "$PLATFORM\n" > platformname

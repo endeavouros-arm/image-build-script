@@ -428,8 +428,9 @@ _desktop_setup() {
     fi
     case $DENAME in
        PLASMA | LXQT) systemctl enable sddm.service ;;
-       GNOME)         systemctl enable gdm ;;
+       GNOME) systemctl enable gdm ;;
        XFCE4 | CINNAMON | MATE | BUDGIE | I3WM) systemctl enable lightdm ;;
+       LXDE)  systemctl enable lxdm ;;
     esac
 }   # end of function _desktop_setup
 
