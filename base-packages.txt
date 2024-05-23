@@ -15,10 +15,10 @@ bash-completion
 bind
 bluez
 bluez-utils
-breeze-gtk
 btrfs-progs
 cantarell-fonts
 ckbcomp
+cpio
 cryptsetup
 device-mapper
 dhclient
