@@ -100,6 +100,24 @@ _install_Radxa5b_image() {
     sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/extlinux/extlinux.conf
 }   # End of function _install_Radxa5b_image
 
+_install_Pinebook_image() {
+
+    local partition
+    local uuidno
+    local old
+
+    pacstrap -cGM MP - < $WORKDIR/ARM-pkglist.txt
+    _copy_stuff_for_chroot
+#    cp -r $WORKDIR/extlinux $WORKDIR/boot/
+    _fstab_uuid
+    # change extlinux.conf to UUID instead of partition label.
+    partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
+    uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
+    # uuidno should now be root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
+    old=$(grep 'root=' $WORKDIR/MP/boot/extlinux/extlinux.conf | awk '{print $2}')
+    sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/extlinux/extlinux.conf
+}   # End of function _install_Radxa5b_image
+
 _install_OdroidN2_image() {
 
     local partition

@@ -195,7 +195,7 @@ _clean_up() {
 
 _completed_notification() {
     printf "\n\n${CYAN}Installation is complete!\n\n"
-    printf "\nRemember your new user name and password when remotely logging into the server\n"
+    printf "\nRemember your new user name and password when logging in.\n"
 #    printf "\nSSH server was installed and enabled to listen on port $SSHPORT\n"
     printf "\nfirewalld was installed and enabled.  public is the default zone.\n"
 #    printf "\nThe ssh service is in use allowing the appropriate ssh port though.\n"
