@@ -179,8 +179,9 @@ _change_user_alarm() {
 
     printf "\n${CYAN}Delete default username (alarm) and Creating a user...${NC}\n"
     userdel -rf alarm     #delete the default user from the image
-    useradd -m -G users -s /bin/bash -u 1000 "$USERNAME"
-    printf "\n${CYAN} Updating user password...\n"
+#   useradd -m -G users -s /bin/bash -u 1000 "$USERNAME"
+    useradd -m -G wheel,sys,rfkill,users -s /bin/bash -u 1000 "$USERNAME"
+    printf "\n${CYAN} Updating user password...${NC}\n"
     echo "${USERNAME}:${USERPASSWD}" | chpasswd
     printf "$USERNAME  ALL=(ALL:ALL) ALL" >> /etc/sudoers
     gpasswd -a $USERNAME wheel
@@ -417,7 +418,7 @@ _user_input() {
 }   # end of function _user_input
 
 _desktop_setup() {
-    _change_user_alarm   # remove user alarm and create new user of choice
+
     if [ "$DENAME" != "NONE" ]; then
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
         printf "${CYAN}Updating base install${NC}\n\n"
@@ -525,7 +526,7 @@ Main() {
     _set_locale
     _set_hostname
     _config_etc_hosts
-    printf "\n${CYAN}Updating root user password...\n\n"
+    printf "\n${CYAN}Updating root user password...${NC}\n\n"
     echo "root:${ROOTPASSWD}" | chpasswd
     if [ "$INSTALLTYPE" == "desktop" ]; then
        _desktop_setup
@@ -533,8 +534,7 @@ Main() {
        _server_setup
     fi
 #    eos-rankmirrors
-    _completed_notification
-    read -n1 x
+    _change_user_alarm   # remove user alarm and create new user of choice
     systemctl disable resize-fs.service
     rm /etc/systemd/system/resize-fs.service
     rm /root/resize-fs.service
@@ -543,6 +543,8 @@ Main() {
     rm /etc/systemd/system/config-eos.service
     rm /root/config-eos.sh
     rm /root/DE-pkglist.txt
+    _completed_notification
+    read -n1 x
     systemctl reboot
 }  # end of Main
 

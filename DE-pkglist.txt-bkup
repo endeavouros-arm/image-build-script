@@ -15,22 +15,33 @@ PLASMA kcalc
 PLASMA kde-cli-tools
 PLASMA kde-gtk-config
 PLASMA kdeconnect
-PLASMA kdegraphics-thumbnailers
+PLASMA kdegraphics-thumnailers
 PLASMA kdenetwork-filesharing
 PLASMA kdeplasma-addons
 PLASMA kgamma
 PLASMA kimageformats
 PLASMA kinfocenter
+# PLASMA kinit
 PLASMA kio-admin
 PLASMA kio-extras
 PLASMA kio-fuse
 PLASMA konsole
 PLASMA kscreen
 PLASMA kwallet-pam
+# PLASMA kwayland
 PLASMA kwayland-integration
 PLASMA libappindicator-gtk3
 PLASMA maliit-keyboard
 PLASMA okular
+# PLASMA kwayland5
+# PLASMA qt5-wayland
+# PLASMA qt6-wayland
+# PLASMA wayland
+# PLASMA wayland-utils
+# PLASMA xorg-xwayland
+# PLASMA libappindicator-gtk3
+# PLASMA okular
+# PLASMA plasma
 PLASMA plasma-browser-integration
 PLASMA plasma-desktop
 PLASMA plasma-disks
@@ -41,10 +52,11 @@ PLASMA plasma-systemmonitor
 PLASMA plasma-workspace
 PLASMA powerdevil
 PLASMA print-manager
+# PLASMA sddm
 PLASMA sddm-kcm
 PLASMA spectacle
 PLASMA xdg-desktop-portal-kde
-PLASMA xsettingsd
+PLASMA xsettings
 PLASMA xwaylandvideobridge
 
 GNOME arc-gtk-theme-eos
