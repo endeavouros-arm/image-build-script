@@ -252,7 +252,16 @@ _precheck_setup() {
        fi
     fi
 
-     printf "\n${CYAN}Checking Internet Connection...${NC}\n\n"
+    # offer to connect to WiFi
+    whiptail  --title "EndeavourOS ARM Setup - Connect to WiFi"  --yesno --yes-button "No" --no-button "Yes" "           If no wired ethernet connection is available you need\n            to connect to WiFi with a network SSID and password.\n\n                     Do you wish to connect to WiFi? \n\n" 10 80 15 3>&2 2>&1 1>&3 
+    if [ "$?" == "1" ]; then
+      nmtui-connect
+   fi
+   _edit_mirrorlist
+   _enable_paralleldownloads
+   clear
+ 
+   printf "\n${CYAN}Checking Internet Connection...${NC}\n\n"
 
     finished=1
     while [ $finished -ne 0 ]
@@ -415,6 +424,7 @@ _user_input() {
        Is this information correct?" 16 80
        userinputdone="$?"
     done
+    clear
 }   # end of function _user_input
 
 _desktop_setup() {
@@ -510,15 +520,16 @@ Main() {
     NC='\033[0m' # No Color
 
     printf "\n${CYAN}   Initiating...please wait.${NC}\n"
-    sleep 5
+    sleep 3
+
     _precheck_setup    # check various conditions before continuing the script
+#    _edit_mirrorlist
+#    _enable_paralleldownloads
     pacman-key --init
     pacman-key --populate archlinuxarm endeavouros 
     pacman-key --lsign-key EndeavourOS
     pacman-key --lsign-key builder@archlinuxarm.org
     pacman -Syy
-    _edit_mirrorlist
-    _enable_paralleldownloads
     _user_input
     _set_time_zone
     _enable_ntp

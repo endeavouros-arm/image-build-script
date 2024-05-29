@@ -114,7 +114,7 @@ _install_Pinebook_image() {
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
     uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
     # uuidno should now be root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
-    old=$(grep 'root=' $WORKDIR/MP/boot/extlinux/extlinux.conf | awk '{print $2}')
+    old=$(grep 'root=' $WORKDIR/MP/boot/extlinux/extlinux.conf | awk '{print $5}')
     sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/extlinux/extlinux.conf
 }   # End of function _install_Radxa5b_image
 
@@ -384,10 +384,9 @@ Main() {
     rm $WORKDIR/ARM-pkglist.txt
     printf "\n\n${CYAN}arch-chroot for configuration.${NC}\n\n"
     _arch_chroot
-
     case $PLATFORM in
-      OdroidN2)
-         dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
+      OdroidN2)  dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
+      Pinebook)  dd if=$WORKDIR/MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
     esac
 
 #    if $CREATE ; then
