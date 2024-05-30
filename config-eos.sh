@@ -211,7 +211,7 @@ _completed_notification() {
 _precheck_setup() {
     local script_directory
     local whiptail_installed
-    
+   
     # check where script is installed
     script_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
     if [[ "$script_directory" == "/home/alarm/"* ]]; then
@@ -262,22 +262,18 @@ _precheck_setup() {
    clear
  
    printf "\n${CYAN}Checking Internet Connection...${NC}\n\n"
-
-    finished=1
-    while [ $finished -ne 0 ]
-    do
-       sleep 5
-       device=$(ip route | grep default | awk '{print $5}')
-       if [ "$device" == "" ]; then
-          printf "\n${CYAN}Network is down${NC}\n"
-       else
-          state=$(ip link show | grep "$device" | awk '{print $9}')
-          if [ "$state" == "UP" ]; then
-          finished=0
-          printf "\n${CYAN}Network $device is up${NC}\n\n"
-          fi
+       ethernet=$(nmcli dev status | grep 'ethernet  connected' | awk '{print $1}')
+       wifi=$(nmcli dev status | grep 'wifi      connected' | awk '{print $1}')
+       if [ "$ethernet" == "" ] && [ "$wifi" == "" ]; then
+          printf "\n\n${RED}No Internet Connection was detected\nFix your Internet Connection and try again${NC}\n\n"
+          exit
        fi
-    done
+       if [ "$ethernet" != "" ]; then
+           printf "\n${CYAN}Network device $ethernet is UP${NC}\n\n"
+       fi 
+       if [ "$wifi" != "" ]; then
+           printf "\n${CYAN}Network device $wifi is UP${NC}\n\n"
+       fi
 
     ping -c 3 endeavouros.com -W 5
     if [ "$?" != "0" ]
@@ -285,8 +281,6 @@ _precheck_setup() {
        printf "\n\n${RED}No Internet Connection was detected\nFix your Internet Connection and try again${NC}\n\n"
        exit
     fi
-
-    dmesg -n 1    # prevent low level kernel messages from appearing during the script
 }  # end of function _precheck_setup
 
 
@@ -519,12 +513,11 @@ Main() {
     CYAN='\033[0;36m'
     NC='\033[0m' # No Color
 
+    dmesg -n 1    # prevent low level kernel messages from appearing on screen 
     printf "\n${CYAN}   Initiating...please wait.${NC}\n"
     sleep 3
 
     _precheck_setup    # check various conditions before continuing the script
-#    _edit_mirrorlist
-#    _enable_paralleldownloads
     pacman-key --init
     pacman-key --populate archlinuxarm endeavouros 
     pacman-key --lsign-key EndeavourOS
