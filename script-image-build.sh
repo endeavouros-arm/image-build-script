@@ -12,6 +12,8 @@ _partition_Radxa5b() {
     mkpart primary 17MB 400MB \
     mkpart primary 400MB $DEVICESIZE"MB" \
     quit
+    printf "\ncheck both check sums then Press Enter\n\n"
+    read z
 }
 
 _partition_Pinebook() {

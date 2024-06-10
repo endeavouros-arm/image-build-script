@@ -32,7 +32,6 @@ endeavouros-theming
 eos-apps-info
 eos-hooks
 eos-log-tool
-eos-packagelist
 eos-quickstart
 eos-rankmirrors
 eos-update-notifier
