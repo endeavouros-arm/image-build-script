@@ -23,10 +23,6 @@ Pinebook towboot-pinebookpro-bin
 Radxa5b linux-aarch64-rockchip-bsp5.10-joshua-git
 Radxa5b linux-aarch64-rockchip-bsp5.10-joshua-git-headers
 Radxa5b linux-firmware-joshua-git
-#Radxa5b mali-valhall-g610-firmware
-#Radxa5b mesa-panfork-git
-#Radxa5b mesa-vdpau-panfork-git
 Radxa5b mesa-utils
 Radxa5b meson
-#Radxa5b uboot-tools
 

@@ -27,7 +27,7 @@ _finish_up() {
     cp /home/alarm/os-release /etc/
     sed -i 's/Arch/EndeavourOS/g' /etc/issue
     sed -i 's/Arch/EndeavourOS/g' /usr/share/factory/etc/issue
-    sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" /etc/mkinitcpio.d/*.preset
+#    sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" /etc/mkinitcpio.d/*.preset
 #    rm /boot/Image.gz
 #    rm /boot/*fallback.img
     systemctl enable config-eos.service
@@ -63,11 +63,11 @@ Main() {
 #   sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
    sed -i 's|#Color|Color\nILoveCandy|g' /etc/pacman.conf
    sed -i 's|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g' /etc/pacman.conf
-
-   if [ "$PLATFORM_NAME" != "Radxa5b" ]; then
-      sed -i '/^\[core\].*/i [endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
-   else
-      sed -i '/^\[core\].*/i [7Ji]\nSigLevel = Never\nServer = https://github.com/7Ji/archrepo/releases/download/$arch\n\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
+   sed -i '/^\[core\].*/i [endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
+   if [ "$PLATFORM_NAME" == "Radxa5b" ]; then  
+      printf "\n\n[7Ji]\nSigLevel = Never\nServer = https://github.com/7Ji/archrepo/releases/download/$arch\n" >> /etc/pacman.conf
+printf "\n\nFinished writing 7Ji entry in pacman.conf\n"
+read z
    fi
 #   useradd -p "alarm" -G users -s /bin/bash -u 1000 "alarm"
    useradd -G users -s /bin/bash -u 1000 "alarm"
@@ -83,7 +83,7 @@ Main() {
    case $PLATFORM_NAME in
      RPi4 | RPi5) cp /boot/config.txt /boot/config.txt.orig
                   cp /home/alarm/rpi4-config.txt /boot/config.txt ;;
-     Radxa5b) mkinitcpio -P ;;
+#     Radxa5b) mkinitcpio -P ;;
    esac
 
 #   if [ "$TYPE" == "Image" ]; then

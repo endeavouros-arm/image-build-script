@@ -6,13 +6,13 @@ _partition_Radxa5b() {
 #    dd if=$WORKDIR/rk3588-uboot.img ibs=1 skip=0 count=15728640 of=$DEVICENAME
     printf "\n\n${CYAN}393aef106b0f1ce1bb79c8642eead578${NC}\n"
     dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
-    printf "\nBoth check sums should be the same\n\n"
+    printf "\nBoth check sums should be the same\n"
     parted --script -a minimal $DEVICENAME \
     mklabel gpt \
     mkpart primary 17MB 400MB \
     mkpart primary 400MB $DEVICESIZE"MB" \
     quit
-    printf "\ncheck both check sums then Press Enter\n\n"
+    printf "check both check sums then Press Enter\n\n"
     read z
 }
 
@@ -381,7 +381,7 @@ Main() {
        Pinebook) grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_Pinebook_image ;;
        Radxa5b)  grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
-                 _install_Radxa5b_image ;;     
+                 _install_Radxa5b_image ;;  
     esac
     rm $WORKDIR/ARM-pkglist.txt
     printf "\n\n${CYAN}arch-chroot for configuration.${NC}\n\n"
