@@ -4,7 +4,7 @@ _partition_Radxa5b() {
     dd if=/dev/zero of=$DEVICENAME bs=1M count=18
     dd if=$WORKDIR/rk3588-uboot.img of=$DEVICENAME
 #    dd if=$WORKDIR/rk3588-uboot.img ibs=1 skip=0 count=15728640 of=$DEVICENAME
-    printf "\n\n${CYAN}36b9ce1a8ebda8e5d03dae8b9be5f361${NC}\n"
+    printf "\n\n${CYAN}393aef106b0f1ce1bb79c8642eead578${NC}\n"
     dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
     printf "\nBoth check sums should be the same\n\n"
     parted --script -a minimal $DEVICENAME \
@@ -92,7 +92,7 @@ _install_Radxa5b_image() {
 
     pacstrap -cGM MP - < $WORKDIR/ARM-pkglist.txt
     _copy_stuff_for_chroot
-    cp -r $WORKDIR/extlinux $WORKDIR/boot/
+    cp -r $WORKDIR/extlinux $WORKDIR/MP/boot/
     _fstab_uuid
     # change extlinux.conf to UUID instead of partition label.
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
@@ -118,7 +118,7 @@ _install_Pinebook_image() {
     # uuidno should now be root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
     old=$(grep 'root=' $WORKDIR/MP/boot/extlinux/extlinux.conf | awk '{print $5}')
     sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/extlinux/extlinux.conf
-}   # End of function _install_Radxa5b_image
+}   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
 

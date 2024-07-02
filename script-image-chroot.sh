@@ -63,11 +63,18 @@ Main() {
 #   sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
    sed -i 's|#Color|Color\nILoveCandy|g' /etc/pacman.conf
    sed -i 's|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g' /etc/pacman.conf
-   sed -i '/^\[core\].*/i [endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
 
-   useradd -p "alarm" -G users -s /bin/bash -u 1000 "alarm"
+   if [ "$PLATFORM_NAME" != "Radxa5b" ]; then
+      sed -i '/^\[core\].*/i [endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
+   else
+      sed -i '/^\[core\].*/i [7Ji]\nSigLevel = Never\nServer = https://github.com/7Ji/archrepo/releases/download/$arch\n\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
+   fi
+#   useradd -p "alarm" -G users -s /bin/bash -u 1000 "alarm"
+   useradd -G users -s /bin/bash -u 1000 "alarm"
+   echo "alarm:alarm" | chpasswd -c SHA256
    printf "\n${CYAN}Setting root user password...${NC}\n\n"
-   echo "root:root" | chpasswd
+   echo "root:root" | chpasswd -c SHA256
+#   pwconv
 
    sed -i 's| Server = http://mirror.archlinuxarm.org/$arch/$repo|# Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
    sed -i 's|# Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo| Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
@@ -76,6 +83,7 @@ Main() {
    case $PLATFORM_NAME in
      RPi4 | RPi5) cp /boot/config.txt /boot/config.txt.orig
                   cp /home/alarm/rpi4-config.txt /boot/config.txt ;;
+     Radxa5b) mkinitcpio -P ;;
    esac
 
 #   if [ "$TYPE" == "Image" ]; then

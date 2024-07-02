@@ -41,6 +41,7 @@ PLASMA plasma-systemmonitor
 PLASMA plasma-workspace
 PLASMA powerdevil
 PLASMA print-manager
+PLASMA sddm
 PLASMA sddm-kcm
 PLASMA spectacle
 PLASMA xdg-desktop-portal-kde
