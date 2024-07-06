@@ -21,8 +21,16 @@ _finish_up() {
     rm /root/platformname
 #    rm /home/alarm/smb.conf
     rm /root/type
-    cp /home/alarm/config-eos.service /etc/systemd/system/
-    chmod +x /root/config-eos.sh
+    case $PLATFORM_NAME in
+       ServRPi | Servodn) cp /home/alarm/config-server.service /etc/systemd/system/
+                          chmod +x /root/config-server.sh
+                          systemctl enable config-server.service
+                          ;;
+      *)                  cp /home/alarm/config-eos.service /etc/systemd/system/
+                          chmod +x /root/config-eos.sh
+                          systemctl enable config-eos.service
+                          ;;
+    esac
     cp /home/alarm/lsb-release /etc/
     cp /home/alarm/os-release /etc/
     sed -i 's/Arch/EndeavourOS/g' /etc/issue
@@ -30,7 +38,7 @@ _finish_up() {
 #    sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" /etc/mkinitcpio.d/*.preset
 #    rm /boot/Image.gz
 #    rm /boot/*fallback.img
-    systemctl enable config-eos.service
+
     systemctl enable NetworkManager
     systemctl enable systemd-timesyncd
     systemctl enable firewalld
@@ -66,14 +74,16 @@ Main() {
    sed -i '/^\[core\].*/i [endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
    if [ "$PLATFORM_NAME" == "Radxa5b" ]; then  
       printf "\n\n[7Ji]\nSigLevel = Never\nServer = https://github.com/7Ji/archrepo/releases/download/$arch\n" >> /etc/pacman.conf
-printf "\n\nFinished writing 7Ji entry in pacman.conf\n"
-read z
    fi
 #   useradd -p "alarm" -G users -s /bin/bash -u 1000 "alarm"
    useradd -G users -s /bin/bash -u 1000 "alarm"
    echo "alarm:alarm" | chpasswd -c SHA256
    printf "\n${CYAN}Setting root user password...${NC}\n\n"
    echo "root:root" | chpasswd -c SHA256
+   printf "alarm ALL=(ALL:ALL) NOPASSWD: ALL\n" >> /etc/sudoers
+   gpasswd -a alarm wheel
+#   chown alarm:alarm /home/alarm/.xinitrc
+#   chmod 644 /home/alarm/.xinitrc
 #   pwconv
 
    sed -i 's| Server = http://mirror.archlinuxarm.org/$arch/$repo|# Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
@@ -81,9 +91,9 @@ read z
    sed -i 's|# Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo| Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
 
    case $PLATFORM_NAME in
-     RPi4 | RPi5) cp /boot/config.txt /boot/config.txt.orig
-                  cp /home/alarm/rpi4-config.txt /boot/config.txt ;;
-#     Radxa5b) mkinitcpio -P ;;
+     RPi4 | RPi5 | ServRPi) cp /boot/config.txt /boot/config.txt.orig
+                            cp /home/alarm/rpi4-config.txt /boot/config.txt ;;
+     Radxa5b) mkinitcpio -P ;;
    esac
 
 #   if [ "$TYPE" == "Image" ]; then

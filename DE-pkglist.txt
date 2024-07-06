@@ -80,7 +80,6 @@ GNOME gvfs-mtp
 GNOME gvfs-nfs
 GNOME gvfs-smb
 GNOME nautilus
-GNOME nautilus-sendto
 GNOME sushi
 GNOME totem
 GNOME xdg-desktop-portal-gnome

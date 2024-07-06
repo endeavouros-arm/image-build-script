@@ -48,18 +48,20 @@ _copy_stuff_for_chroot() {
     mkdir $WORKDIR/MP/home/alarm
     cp $WORKDIR/script-image-chroot.sh $WORKDIR/MP/root/
     cp $WORKDIR/config-eos.sh $WORKDIR/MP/root/
+    cp $WORKDIR/config-eos.service $WORKDIR/MP/home/alarm/
+    cp $WORKDIR/config-server.sh $WORKDIR/MP/root/
+    cp $WORKDIR/config-server.service $WORKDIR/MP/home/alarm/    
     cp $WORKDIR/resize-fs.service $WORKDIR/MP/root
     cp $WORKDIR/resize-fs.sh $WORKDIR/MP/root
     cp $WORKDIR/DE-pkglist.txt $WORKDIR/MP/root
     cp $WORKDIR/smb.conf $WORKDIR/MP/home/alarm
-    cp $WORKDIR/config-eos.service $WORKDIR/MP/home/alarm/
     cp $WORKDIR/lsb-release $WORKDIR/MP/home/alarm
     cp $WORKDIR/os-release $WORKDIR/MP/home/alarm
     case $PLATFORM in
       RPi4) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm ;;
       RPi5) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm
             cp $WORKDIR/99-vd3.conf $WORKDIR/MP/etc/X11/xorg.conf.d ;;
-      OdroidN2)    cp $WORKDIR/n2-boot.ini $WORKDIR/MP/home/alarm ;;
+      OdroidN2) cp $WORKDIR/n2-boot.ini $WORKDIR/MP/home/alarm ;;
     esac
     printf "$PLATFORM\n" > platformname
     cp platformname $WORKDIR/MP/root/
@@ -178,10 +180,10 @@ _partition_format_mount() {
    printf "\n${CYAN}Partitioning storage device $DEVICENAME...${NC}\n"
 
    case $PLATFORM in   
-      RPi4 | RPi5) _partition_RPi4 ;;
-      OdroidN2) _partition_OdroidN2 ;;
-      Pinebook) _partition_Pinebook ;;
-      Radxa5b) _partition_Radxa5b ;;
+      RPi4 | RPi5 | ServRPi) _partition_RPi4 ;;
+      OdroidN2 | Servodn)    _partition_OdroidN2 ;;
+      Pinebook)              _partition_Pinebook ;;
+      Radxa5b)               _partition_Radxa5b ;;
    esac
   
    printf "\n${CYAN}Formatting storage device $DEVICENAME...${NC}\n"
@@ -267,7 +269,7 @@ _help() {
    printf "options:\n"
    printf " -h  Print this Help.\n\n"
    printf "These options are required\n"
-   printf " -p  enter platform: rpi4 rpi5 odn pbp or rad\n"
+   printf " -p  enter platform: rpi4 rpi5 odn pbp rad srpi sodn\n"
 #   printf " -t  image type: r (for rootfs) or i (for image) \n"
    printf " -c  create image: (y) or n\n"
    printf "example: sudo ./build-server-image-eos.sh -p rpi4 -c y \n"
@@ -320,7 +322,9 @@ _read_options() {
          rpi5) PLATFORM="RPi5" ;;
          odn) PLATFORM="OdroidN2" ;;
          pbp) PLATFORM="Pinebook" ;;
-         rad) PLATFORM="Radxa5b" ;;         
+         rad) PLATFORM="Radxa5b" ;;
+         srpi) PLATFORM="ServRPi" ;;
+         sodn) PLATFORM="Servodn" ;;        
      *) PLAT1=true;;
     esac
 
@@ -381,13 +385,17 @@ Main() {
        Pinebook) grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_Pinebook_image ;;
        Radxa5b)  grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
-                 _install_Radxa5b_image ;;  
+                 _install_Radxa5b_image ;; 
+       ServRPi)  cp $WORKDIR/pkglist-rpi4-server.txt $WORKDIR/ARM-pkglist.txt
+                 _install_RPi_image ;;
+       Servodn)  cp $WORKDIR/pkglist-odn-server.txt $WORKDIR/ARM-pkglist.txt
+                 _install_OdroidN2_image ;;  
     esac
     rm $WORKDIR/ARM-pkglist.txt
     printf "\n\n${CYAN}arch-chroot for configuration.${NC}\n\n"
     _arch_chroot
     case $PLATFORM in
-      OdroidN2)  dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
+      OdroidN2 | Servodn)  dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
       Pinebook)  dd if=$WORKDIR/MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
     esac
 

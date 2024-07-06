@@ -177,14 +177,11 @@ _config_etc_hosts() {
 _change_user_alarm() {
     local tmpfile
 
-    printf "\n${CYAN}Delete default username (alarm) and Creating a user...${NC}\n"
+    printf "\n${CYAN}Delete default username (alarm) and Creating a user...${NC}"
     userdel -rf alarm     #delete the default user from the image
-#   useradd -m -G users -s /bin/bash -u 1000 "$USERNAME"
-    useradd -m -G wheel,sys,rfkill,users -s /bin/bash -u 1000 "$USERNAME"
-    printf "\n${CYAN} Updating user password...${NC}\n"
+    useradd -m -G users -s /bin/bash -u 1000 "$USERNAME"
+    printf "\n${CYAN} Updating user password...\n\n"
     echo "${USERNAME}:${USERPASSWD}" | chpasswd
-    printf "$USERNAME  ALL=(ALL:ALL) ALL" >> /etc/sudoers
-    gpasswd -a $USERNAME wheel
 }   # End of function _change_user_alarm
 
 _clean_up() {
@@ -195,12 +192,12 @@ _clean_up() {
 
 _completed_notification() {
     printf "\n\n${CYAN}Installation is complete!\n\n"
-    printf "\nRemember your new user name and password when logging in.\n"
-#    printf "\nSSH server was installed and enabled to listen on port $SSHPORT\n"
+    printf "\nRemember your new user name and password when remotely logging into the server\n"
+    printf "\nSSH server was installed and enabled to listen on port $SSHPORT\n"
     printf "\nfirewalld was installed and enabled.  public is the default zone.\n"
-#    printf "\nThe ssh service is in use allowing the appropriate ssh port though.\n"
-#    printf "\nsources is set to the IP address of your router, which will only allow"
-#    printf "\naccess to the server from your local LAN on the specified port\n\n"
+    printf "\nThe ssh service is in use allowing the appropriate ssh port though.\n"
+    printf "\nsources is set to the IP address of your router, which will only allow"
+    printf "\naccess to the server from your local LAN on the specified port\n\n"
 
     printf "Pressing Ctrl c will exit the script and give a CLI prompt"
     printf "\nto allow the user to use pacman to add additional packages"
@@ -208,10 +205,127 @@ _completed_notification() {
     printf "Press any key exits the script, removes all install files, and reboots the computer.${NC}\n\n"
 }
 
+
+_install_ssd() {
+    local user_confirmation
+    local finished
+    local base_dialog_content
+    local dialog_content
+    local exit_status
+    local datadevicename
+    local datadevicesize
+    local mntname
+    local uuidno
+
+    usbssd=$(whiptail --title "EndeavourOS ARM Setup - SSD Configuration" --menu --notags "\n  You can do the following with a connected USB SSD for data storge:\n\n  Partition & format, create mount points, & config /etc/fstab.\n  Only create Mount points for an existing USB SSD\n  Do nothing\n\n" 16 75 3 \
+       "0" "Partion & format, create mount points, config /etc/fstab" \
+       "1" "Only create mount points" \
+       "2" "Do nothing" \
+       3>&2 2>&1 1>&3)
+
+   case $usbssd in
+       0)  whiptail  --title "EndeavourOS ARM Setup - SSD Configuration"  --yesno "        Discharge any bodily static by touching something grounded.\n Connect a USB 3 external enclosure with a SSD or hard drive installed\n\n \
+       CAUTION: ALL data on this drive will be erased\n \
+       Do you want to continue?" 12 80
+           user_confirmation="$?"
+
+           if [ $user_confirmation == "0" ]
+           then
+              finished=1
+              base_dialog_content="\nThe following storage devices were found\n\n$(lsblk -o NAME,MODEL,FSTYPE,SIZE,FSUSED,FSAVAIL,MOUNTPOINT)\n\n \
+              Enter target device name without a partition designation (e.g. /dev/sda or /dev/mmcblk0):"
+              dialog_content="$base_dialog_content"
+              while [ $finished -ne 0 ]
+              do
+                 datadevicename=$(whiptail --title "EndeavourOS ARM Setup - micro SD Configuration" --inputbox "$dialog_content" 27 115 3>&2 2>&1 1>&3)
+                 exit_status=$?
+                 if [ $exit_status == "1" ]; then
+                    printf "\nInstall SSD aborted by user\n\n"
+                    return
+                 fi
+                 if [[ ! -b "$datadevicename" ]]; then
+                    dialog_content="$base_dialog_content\n    Not a listed block device, or not prefaced by /dev/ Try again."
+                 else
+                    case $datadevicename in
+                       /dev/sd*)  if [[ ${#datadevicename} -eq 8 ]]; then
+                                    finished=0
+                                  else
+                                     dialog_content="$base_dialog_content\n    Input improperly formatted. Try again."
+                                 fi ;;
+                  /dev/mmcblk*)  if [[ ${#datadevicename} -eq 12 ]]; then
+                                    finished=0
+                                 else
+                                    dialog_content="$base_dialog_content\n    Input improperly formatted. Try again."
+                                 fi ;;
+                    esac
+                 fi
+              done
+
+              ##### Determine data device size in MiB and partition ###
+              printf "\n${CYAN}Partitioning, & formatting DATA storage device...${NC}\n"
+              datadevicesize=$(fdisk -l | grep "Disk $datadevicename" | awk '{print $5}')
+              ((datadevicesize=$datadevicesize/1048576))
+              ((datadevicesize=$datadevicesize-1))  # for some reason, necessary for USB thumb drives
+              printf "\n${CYAN}Partitioning DATA device $datadevicename...${NC}\n"
+              parted --script -a minimal $datadevicename \
+              mklabel gpt \
+              unit mib \
+              mkpart primary 1MiB $datadevicesize"MiB" \
+              quit
+              sleep 3
+              if [[ ${datadevicename:5:4} = "nvme" ]]
+              then
+                 mntname=$datadevicename"p1"
+              else
+                 mntname=$datadevicename"1"
+              fi
+              printf "\n${CYAN}Formatting DATA device $mntname...${NC}\n"
+              printf "\n${CYAN}If \"/dev/sdx contains a ext4 file system Labelled XXXX\" or similar appears,    Enter: y${NC}\n\n"
+              mkfs.ext4 -F -L DATA $mntname
+              sleep 3
+              printf "\n${CYAN}Creating mount points /server & /serverbkup${NC}\n\n"
+              mkdir /server /serverbkup
+              chown root:users /server /serverbkup
+              chmod 774 /server /serverbkup
+              sleep 2
+              printf "\n${CYAN}Adding DATA storage device to /etc/fstab...${NC}"
+              cp /etc/fstab /etc/fstab-bkup
+              uuidno=$(lsblk -o UUID $mntname)
+              uuidno=$(echo $uuidno | sed 's/ /=/g')
+              printf "\n# $mntname\n$uuidno      /server          ext4            rw,relatime     0 2\n" >> /etc/fstab
+              printf "\n${CYAN} New /etc/fstab${NC}\n"
+              cat /etc/fstab
+              sleep 4
+              printf "\n${CYAN}Mounting DATA device $mntname on /server...${NC}"
+              mount $mntname /server
+              chown root:users /server /serverbkup
+              chmod 774 /server /serverbkup
+              printf "\033c"; printf "\n"
+              printf "${CYAN}Data storage device summary:\n\n"
+              printf "\nAn external USB 3 device was partitioned, formatted, and /etc/fstab was configured.\n"
+              printf "This device will be on mount point /server and will be mounted at bootup.\n"
+              printf "The mount point /serverbkup was also created for use in backing up the DATA device.${NC}\n"
+              printf "\n\nPress Enter to continue\n"
+              read -n 1 z
+           fi ;;
+
+       1)  mkdir /server /serverbkup
+           chown root:users /server /serverbkup
+           chmod 774 /server /serverbkup
+           printf "${CYAN}Data storage device summary:${NC}\n\n"
+           printf "Mount point for the USB SSD DATA device will be on /server\n"
+           printf "/etc/fstab will need to be configured.\n\n"
+           printf "Mount point /serverbkup was also created for use in backing up the DATA device.\n\n"
+           printf "\n\nPress Enter to continue\n"
+           read -n 1 z ;;
+       2) return ;;
+   esac
+}  # end of function _install_ssd
+
 _precheck_setup() {
     local script_directory
     local whiptail_installed
-   
+    
     # check where script is installed
     script_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
     if [[ "$script_directory" == "/home/alarm/"* ]]; then
@@ -252,28 +366,23 @@ _precheck_setup() {
        fi
     fi
 
-    # offer to connect to WiFi
-    whiptail  --title "EndeavourOS ARM Setup - Connect to WiFi"  --yesno --yes-button "No" --no-button "Yes" "           If no wired ethernet connection is available you need\n            to connect to WiFi with a network SSID and password.\n\n                     Do you wish to connect to WiFi? \n\n" 10 80 15 3>&2 2>&1 1>&3 
-    if [ "$?" == "1" ]; then
-      nmtui-connect
-   fi
-   _edit_mirrorlist
-   _enable_paralleldownloads
-   clear
- 
-   printf "\n${CYAN}Checking Internet Connection...${NC}\n\n"
-       ethernet=$(nmcli dev status | grep 'ethernet  connected' | awk '{print $1}')
-       wifi=$(nmcli dev status | grep 'wifi      connected' | awk '{print $1}')
-       if [ "$ethernet" == "" ] && [ "$wifi" == "" ]; then
-          printf "\n\n${RED}No Internet Connection was detected\nFix your Internet Connection and try again${NC}\n\n"
-          exit
+     printf "\n${CYAN}Checking Internet Connection...${NC}\n\n"
+
+    finished=1
+    while [ $finished -ne 0 ]
+    do
+       sleep 5
+       device=$(ip route | grep default | awk '{print $5}')
+       if [ "$device" == "" ]; then
+          printf "\n${CYAN}Network is down${NC}\n"
+       else
+          state=$(ip link show | grep "$device" | awk '{print $9}')
+          if [ "$state" == "UP" ]; then
+          finished=0
+          printf "\n${CYAN}Network $device is up${NC}\n\n"
+          fi
        fi
-       if [ "$ethernet" != "" ]; then
-           printf "\n${CYAN}Network device $ethernet is UP${NC}\n\n"
-       fi 
-       if [ "$wifi" != "" ]; then
-           printf "\n${CYAN}Network device $wifi is UP${NC}\n\n"
-       fi
+    done
 
     ping -c 3 endeavouros.com -W 5
     if [ "$?" != "0" ]
@@ -281,6 +390,8 @@ _precheck_setup() {
        printf "\n\n${RED}No Internet Connection was detected\nFix your Internet Connection and try again${NC}\n\n"
        exit
     fi
+
+    dmesg -n 1    # prevent low level kernel messages from appearing during the script
 }  # end of function _precheck_setup
 
 
@@ -382,62 +493,96 @@ _user_input() {
              finished=0
            fi
        done
-          DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n                          Choose which Desktop Environment to install\n\n" 22 100 15 \
-               "0" "No Desktop Environment" \
-               "1" "KDE Plasma" \
-               "2" "Gnome" \
-               "3" "Xfce4" \
-               "4" "Cinnamon" \
-               "5" "Mate" \
-               "6" "Budgie" \
-               "7" "LXQT" \
-               "8" "LXDE" \
-               "9" "i3wm" \
-              3>&2 2>&1 1>&3)
 
-          case $DENAME in
-             0) DENAME="NONE" ;;
-             1) DENAME="PLASMA" ;;
-             2) DENAME="GNOME" ;;
-             3) DENAME="XFCE4" ;;
-             4) DENAME="CINNAMON" ;;
-             5) DENAME="MATE" ;;
-             6) DENAME="BUDGIE" ;;
-             7) DENAME="LXQT" ;;
-             8) DENAME="LXDE" ;;
-             9) DENAME="I3WM" ;;
-          esac
- #      fi
+       finished=1
+       description="\n  For better security, change the SSH port\n  to something besides 22\n\n  Enter the desired SSH port between 8000 and 48000"
+
+       while [ $finished -ne 0 ]
+       do
+          SSHPORT=$(whiptail --nocancel  --title "EndeavourOS ARM Setup - Server Configuration"  --inputbox "$description" 12 60 3>&2 2>&1 1>&3)
+
+          if [ "$SSHPORT" -eq "$SSHPORT" ] # 2>/dev/null
+          then
+             if [ $SSHPORT -lt 8000 ] || [ $SSHPORT -gt 48000 ]
+             then
+                description="Your choice is out of range, try again.\n\nEnter the desired SSH port between 8000 and 48000"
+             else
+                finished=0
+             fi
+          else
+                 description="Your choice is not a number, try again.\n\nEnter the desired SSH port between 8000 and 48000"
+          fi
+       done
+
+       ETHERNETDEVICE=$(ip r | awk 'NR==1{print $5}')
+       ROUTERIP=$(ip r | awk 'NR==1{print $3}')
+       THREETRIADS=$ROUTERIP
+       xyz=${THREETRIADS#*.*.*.}
+       THREETRIADS=${THREETRIADS%$xyz}
+       finished=1
+       description="\n  Servers work best with a Static IP address. \n  The first three triads of your router are $THREETRIADS\n  For the best router compatibility, the last triad should be between 120 and 250\n\n  Enter the last triad of the desired static IP address $THREETRIADS"
+       while [ $finished -ne 0 ]
+       do
+          lasttriad=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Server Configuration"  --title "SETTING UP THE STATIC IP ADDRESS FOR THE SERVER" --inputbox "$description" 13 88 3>&2 2>&1 1>&3)
+          if [ "$lasttriad" -eq "$lasttriad" ] # 2>/dev/null
+          then
+             if [ $lasttriad -lt 120 ] || [ $lasttriad -gt 250 ]
+             then
+                description="For the best router compatibility, the last triad should be between 120 and 250\n\nEnter the last triad of the desired static IP address $THREETRIADS\n\nYour choice is out of range. Please try again\n"
+             else
+                   finished=0
+             fi
+          else
+	         description="For the best router compatibility, the last triad should be between 120 and 250\n\nEnter the last triad of the desired static IP address $THREETRIADS\n\nYour choice is not a number.  Please try again\n"
+             fi
+       done
+
+       STATICIP=$THREETRIADS$lasttriad
+       STATICIP=$STATICIP"/24"
 
        whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "              To review, you entered the following information:\n\n \
        Time Zone: $TIMEZONE \n \
        Host Name: $HOSTNAME \n \
        Full Name: $FULLNAME \n \
        User Name: $USERNAME \n \
-       Desktop:   $DENAME \n\n \
+       SSH Port:  $SSHPORT \n \
+       Static IP: $STATICIP \n\n \
        Is this information correct?" 16 80
        userinputdone="$?"
     done
-    clear
 }   # end of function _user_input
 
-_desktop_setup() {
+_find_mirrorlist() {
+    local currentmirrorlist
 
-    if [ "$DENAME" != "NONE" ]; then
-        grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
-        printf "${CYAN}Updating base install${NC}\n\n"
-        pacman -Syyu --noconfirm
-        printf "${CYAN}Installing $DENAME${NC}\n\n}"
-        pacman -S --needed --noconfirm - < packages
-        rm packages
-    fi
-    case $DENAME in
-       PLASMA | LXQT) systemctl enable sddm.service ;;
-       GNOME) systemctl enable gdm ;;
-       XFCE4 | CINNAMON | MATE | BUDGIE | I3WM) systemctl enable lightdm ;;
-       LXDE)  systemctl enable lxdm ;;
-    esac
-}   # end of function _desktop_setup
+    printf "\n${CYAN}Find current endeavouros-mirrorlist...${NC}\n\n"
+    sleep 1
+    currentmirrorlist=$(curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/aarch64 | grep "endeavouros-mirrorlist" | sed s'/^.*endeavouros-mirrorlist/endeavouros-mirrorlist/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | head -1)
+
+    printf "\n${CYAN}Downloading endeavouros-mirrorlist...${NC}"
+    wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/aarch64/$currentmirrorlist
+
+    printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
+    pacman -U --noconfirm $currentmirrorlist
+    rm $currentmirrorlist
+    sed -i "s|\[core\]|\[endeavouros\]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n\[core\]|g" /etc/pacman.conf
+}  # end of function _find_mirrorlist
+
+
+_find_keyring() {
+    local currentkeyring
+
+    printf "\n${CYAN}Find current endeavouros-keyring...${NC}\n\n"
+    sleep 1
+    currentkeyring=$(curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/aarch64 | grep endeavouros-keyring | sed s'/^.*endeavouros-keyring/endeavouros-keyring/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | head -1)
+
+    printf "\n${CYAN}Downloading endeavouros-keyring...${NC}"
+    wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/aarch64/$currentkeyring
+
+    printf "\n${CYAN}Installing endeavouros-keyring...${NC}\n"
+    pacman -U --noconfirm $currentkeyring
+    rm $currentkeyring
+}   # End of function _find_keyring
 
 _server_setup() {
     _change_user_alarm    # remove user alarm and create new user of choice
@@ -495,7 +640,7 @@ Main() {
     chvt 2
     TIMEZONE=""
     TIMEZONEPATH=""
-    INSTALLTYPE="desktop"
+    INSTALLTYPE="server"
     USERNAME=""
     HOSTNAME=""
     FULLNAME=""
@@ -513,16 +658,19 @@ Main() {
     CYAN='\033[0;36m'
     NC='\033[0m' # No Color
 
-    dmesg -n 1    # prevent low level kernel messages from appearing on screen 
     printf "\n${CYAN}   Initiating...please wait.${NC}\n"
-    sleep 3
-
+    sleep 5
     _precheck_setup    # check various conditions before continuing the script
     pacman-key --init
-    pacman-key --populate archlinuxarm endeavouros 
+    pacman-key --populate archlinuxarm
+    _find_mirrorlist
+    _find_keyring
     pacman-key --lsign-key EndeavourOS
     pacman-key --lsign-key builder@archlinuxarm.org
     pacman -Syy
+
+    _edit_mirrorlist
+    _enable_paralleldownloads
     _user_input
     _set_time_zone
     _enable_ntp
@@ -530,28 +678,21 @@ Main() {
     _set_locale
     _set_hostname
     _config_etc_hosts
-    printf "\n${CYAN}Updating root user password...${NC}\n\n"
+    printf "\n${CYAN}Updating root user password...\n\n"
     echo "root:${ROOTPASSWD}" | chpasswd
-    if [ "$INSTALLTYPE" == "desktop" ]; then
-       _desktop_setup
-    else
-       _server_setup
-    fi
-#    eos-rankmirrors
-    _change_user_alarm   # remove user alarm and create new user of choice
+
+    _server_setup
+    eos-rankmirrors
+    _install_ssd
+    _completed_notification
+    read -n1 x
     systemctl disable resize-fs.service
     rm /etc/systemd/system/resize-fs.service
     rm /root/resize-fs.service
     rm /root/resize-fs.sh
-    systemctl disable config-eos.service
-    rm /etc/systemd/system/config-eos.service
-    rm /root/config-eos.sh
     systemctl disable config-server.service
     rm /etc/systemd/system/config-server.service
-    rm /root/config-service.sh
-    rm /root/DE-pkglist.txt
-    _completed_notification
-    read -n1 x
+    rm /root/eos-ARM-server-config.sh
     systemctl reboot
 }  # end of Main
 
