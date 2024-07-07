@@ -231,6 +231,8 @@ _create_image(){
        OdroidN2) DEVICENAME="odroid-n2" ;;
        Pinebook) DEVICENAME="pbp" ;;
        Radxa5b)  DEVICENAME="radxa-5b" ;;
+       ServRPi)  DEVICENAME="server-rpi" ;;
+       Servodn)  DEVICENAME="server-odroid-n2" ;;
     esac
           xz -kvfT0 -2 $WORKDIR/test.img
           cp $WORKDIR/test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-$DEVICENAME-latest.img.xz
