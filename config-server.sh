@@ -181,7 +181,7 @@ _change_user_alarm() {
     userdel -rf alarm     #delete the default user from the image
     useradd -m -G users -s /bin/bash -u 1000 "$USERNAME"
     printf "\n${CYAN} Updating user password...\n\n"
-    echo "${USERNAME}:${USERPASSWD}" | chpasswd
+    echo "${USERNAME}:${USERPASSWD}" | chpasswd -c SHA256
 }   # End of function _change_user_alarm
 
 _clean_up() {
@@ -552,38 +552,6 @@ _user_input() {
     done
 }   # end of function _user_input
 
-_find_mirrorlist() {
-    local currentmirrorlist
-
-    printf "\n${CYAN}Find current endeavouros-mirrorlist...${NC}\n\n"
-    sleep 1
-    currentmirrorlist=$(curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/aarch64 | grep "endeavouros-mirrorlist" | sed s'/^.*endeavouros-mirrorlist/endeavouros-mirrorlist/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | head -1)
-
-    printf "\n${CYAN}Downloading endeavouros-mirrorlist...${NC}"
-    wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/aarch64/$currentmirrorlist
-
-    printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
-    pacman -U --noconfirm $currentmirrorlist
-    rm $currentmirrorlist
-    sed -i "s|\[core\]|\[endeavouros\]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n\[core\]|g" /etc/pacman.conf
-}  # end of function _find_mirrorlist
-
-
-_find_keyring() {
-    local currentkeyring
-
-    printf "\n${CYAN}Find current endeavouros-keyring...${NC}\n\n"
-    sleep 1
-    currentkeyring=$(curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/aarch64 | grep endeavouros-keyring | sed s'/^.*endeavouros-keyring/endeavouros-keyring/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | head -1)
-
-    printf "\n${CYAN}Downloading endeavouros-keyring...${NC}"
-    wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/aarch64/$currentkeyring
-
-    printf "\n${CYAN}Installing endeavouros-keyring...${NC}\n"
-    pacman -U --noconfirm $currentkeyring
-    rm $currentkeyring
-}   # End of function _find_keyring
-
 _server_setup() {
     _change_user_alarm    # remove user alarm and create new user of choice
 
@@ -692,7 +660,8 @@ Main() {
     rm /root/resize-fs.sh
     systemctl disable config-server.service
     rm /etc/systemd/system/config-server.service
-    rm /root/eos-ARM-server-config.sh
+    rm /root/config-server.sh
+    rm /root/DE-pkglist.txt
     systemctl reboot
 }  # end of Main
 

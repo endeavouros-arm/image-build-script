@@ -5,7 +5,6 @@ raspberrypi-utils
 firmware-raspberrypi
 arch-install-scripts
 archlinuxarm-keyring
-archlinux-keyring
 base
 base-devel
 bash-completion

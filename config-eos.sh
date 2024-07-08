@@ -546,9 +546,6 @@ Main() {
     systemctl disable config-eos.service
     rm /etc/systemd/system/config-eos.service
     rm /root/config-eos.sh
-    systemctl disable config-server.service
-    rm /etc/systemd/system/config-server.service
-    rm /root/config-service.sh
     rm /root/DE-pkglist.txt
     _completed_notification
     read -n1 x

@@ -4,7 +4,6 @@ odroid-n2-post-install
 uboot-odroid-n2plus
 arch-install-scripts
 archlinuxarm-keyring
-archlinux-keyring
 base
 base-devel
 bash-completion

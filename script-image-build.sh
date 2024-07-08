@@ -47,10 +47,14 @@ _partition_RPi4() {
 _copy_stuff_for_chroot() {
     mkdir $WORKDIR/MP/home/alarm
     cp $WORKDIR/script-image-chroot.sh $WORKDIR/MP/root/
-    cp $WORKDIR/config-eos.sh $WORKDIR/MP/root/
-    cp $WORKDIR/config-eos.service $WORKDIR/MP/home/alarm/
-    cp $WORKDIR/config-server.sh $WORKDIR/MP/root/
-    cp $WORKDIR/config-server.service $WORKDIR/MP/home/alarm/    
+    case $PLATFORM in
+       ServRPi | Servodn) cp $WORKDIR/config-server.sh $WORKDIR/MP/root/
+                          cp $WORKDIR/config-server.service $WORKDIR/MP/home/alarm/
+                          ;;
+       *)                 cp $WORKDIR/config-eos.sh $WORKDIR/MP/root/
+                          cp $WORKDIR/config-eos.service $WORKDIR/MP/home/alarm/
+                          ;;
+    esac
     cp $WORKDIR/resize-fs.service $WORKDIR/MP/root
     cp $WORKDIR/resize-fs.sh $WORKDIR/MP/root
     cp $WORKDIR/DE-pkglist.txt $WORKDIR/MP/root
@@ -58,11 +62,14 @@ _copy_stuff_for_chroot() {
     cp $WORKDIR/lsb-release $WORKDIR/MP/home/alarm
     cp $WORKDIR/os-release $WORKDIR/MP/home/alarm
     case $PLATFORM in
-      RPi4) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm ;;
-      RPi5) cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm
-            cp $WORKDIR/99-vd3.conf $WORKDIR/MP/etc/X11/xorg.conf.d ;;
-      OdroidN2) cp $WORKDIR/n2-boot.ini $WORKDIR/MP/home/alarm ;;
+      RPi4 | ServRPi)     cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm ;;
+      RPi5)               cp $WORKDIR/rpi4-config.txt $WORKDIR/MP/home/alarm
+                          cp $WORKDIR/99-vd3.conf $WORKDIR/MP/etc/X11/xorg.conf.d ;;
+      OdroidN2 | Servodn) cp $WORKDIR/n2-boot.ini $WORKDIR/MP/home/alarm ;;
     esac
+    if [ "$PLATFORM" == "ServRPi" ]; then 
+       sed -i 's/# dtoverlay=disable-wifi/dtoverlay=disable-wifi/g' $WORKDIR/MP/home/alarm/rpi4-config.txt
+    fi
     printf "$PLATFORM\n" > platformname
     cp platformname $WORKDIR/MP/root/
     rm platformname
@@ -397,7 +404,8 @@ Main() {
     printf "\n\n${CYAN}arch-chroot for configuration.${NC}\n\n"
     _arch_chroot
     case $PLATFORM in
-      OdroidN2 | Servodn)  dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
+      OdroidN2 | Servodn)  dd if=$WORKDIR/MP/boot/
+u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
       Pinebook)  dd if=$WORKDIR/MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
     esac
 
