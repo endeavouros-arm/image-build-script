@@ -5,6 +5,8 @@ raspberrypi-utils
 firmware-raspberrypi
 arch-install-scripts
 archlinuxarm-keyring
+endeavouros-keyring
+endeavouros-mirrorlist
 base
 base-devel
 bash-completion

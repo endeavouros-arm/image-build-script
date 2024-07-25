@@ -20,8 +20,8 @@ Pinebook linux-eos-arm-headers
 Pinebook pinebookpro-audio
 Pinebook pinebookpro-post-install
 Pinebook towboot-pinebookpro-bin
-Radxa5b linux-aarch64-rockchip-bsp5.10-joshua-git
-Radxa5b linux-aarch64-rockchip-bsp5.10-joshua-git-headers
+Radxa5b linux-aarch64-rockchip-bsp6.1-joshua-git
+Radxa5b linux-aarch64-rockchip-bsp6.1-joshua-git-headers
 Radxa5b linux-firmware-joshua-git
 Radxa5b mesa-utils
 Radxa5b meson

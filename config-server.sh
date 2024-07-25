@@ -630,12 +630,18 @@ Main() {
     sleep 5
     _precheck_setup    # check various conditions before continuing the script
     pacman-key --init
-    pacman-key --populate archlinuxarm
-    _find_mirrorlist
-    _find_keyring
+    pacman-key --populate archlinuxarm endeavouros 
     pacman-key --lsign-key EndeavourOS
     pacman-key --lsign-key builder@archlinuxarm.org
     pacman -Syy
+
+#    pacman-key --init
+#    pacman-key --populate archlinuxarm
+#    _find_mirrorlist
+#    _find_keyring
+#    pacman-key --lsign-key EndeavourOS
+#    pacman-key --lsign-key builder@archlinuxarm.org
+#    pacman -Syy
 
     _edit_mirrorlist
     _enable_paralleldownloads
