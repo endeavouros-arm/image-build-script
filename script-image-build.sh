@@ -404,8 +404,7 @@ Main() {
     printf "\n\n${CYAN}arch-chroot for configuration.${NC}\n\n"
     _arch_chroot
     case $PLATFORM in
-      OdroidN2 | Servodn)  dd if=$WORKDIR/MP/boot/
-u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
+      OdroidN2 | Servodn)  dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
       Pinebook)  dd if=$WORKDIR/MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
     esac
 
