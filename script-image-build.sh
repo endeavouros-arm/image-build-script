@@ -2,17 +2,21 @@
 
 _partition_Radxa5b() {
     dd if=/dev/zero of=$DEVICENAME bs=1M count=18
-    dd if=$WORKDIR/rk3588-uboot.img of=$DEVICENAME
+#    dd if=$WORKDIR/rk3588-uboot.img of=$DEVICENAME
 #    dd if=$WORKDIR/rk3588-uboot.img ibs=1 skip=0 count=15728640 of=$DEVICENAME
-    printf "\n\n${CYAN}393aef106b0f1ce1bb79c8642eead578${NC}\n"
-    dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
-    printf "\nBoth check sums should be the same\n"
+#    printf "\n\n${CYAN}46b3dc9b4dd0abc5ed30417eaeaac321${NC}\n"
+#    dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
+#    printf "\nBoth check sums should be the same\n"
     parted --script -a minimal $DEVICENAME \
     mklabel gpt \
     mkpart primary 17MB 400MB \
     mkpart primary 400MB $DEVICESIZE"MB" \
     quit
-    printf "check both check sums then Press Enter\n\n"
+
+    dd if=$WORKDIR/rk3588-uboot.bin ibs=1 skip=0 count=15728640 of=$DEVICENAME
+    printf "\n\n${CYAN}36b9ce1a8ebda8e5d03dae8b9be5f361${NC}\n"
+    dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
+    printf "\n\n${CYAN}Both check sums should be the same.  Then Press Enter.${NC}\n\n"
     read z
 }
 
@@ -167,7 +171,7 @@ _install_RPi_image() {
 
 _partition_format_mount() {
 
-   fallocate -l 7.5G test.img
+   fallocate -l 8.5G test.img
    fallocate -d test.img
 
    DVN=$(losetup --find --show test.img)
@@ -181,9 +185,7 @@ _partition_format_mount() {
    read z
    ##### Determine data device size in MiB and partition ###
    printf "\n${CYAN}Partitioning, & formatting storage device...${NC}\n"
-   DEVICESIZE=$(fdisk -l | grep "Disk $DEVICENAME" | awk '{print $5}')
-   ((DEVICESIZE=$DEVICESIZE/1048576))
-   ((DEVICESIZE=$DEVICESIZE-10))  # for some reason, necessary for USB thumb drives
+   DEVICESIZE=8192
    printf "\n${CYAN}Partitioning storage device $DEVICENAME...${NC}\n"
 
    case $PLATFORM in   
@@ -195,12 +197,9 @@ _partition_format_mount() {
   
    printf "\n${CYAN}Formatting storage device $DEVICENAME...${NC}\n"
    printf "\n${CYAN}If \"/dev/sdx contains a ext4 file system Labelled XXXX\" or similar appears, Enter: y${NC}\n\n\n"
-
-   DEVICENAME=$DEVICENAME"p"
-
-   PARTNAME1=$DEVICENAME"1"
+   PARTNAME1=$DEVICENAME"p1"
    mkfs.fat -n BOOT_ENOS $PARTNAME1
-   PARTNAME2=$DEVICENAME"2"
+   PARTNAME2=$DEVICENAME"p2"
    mkfs.ext4 -F -L ROOT_ENOS $PARTNAME2
    mkdir $WORKDIR/MP
    mount $PARTNAME2 $WORKDIR/MP
@@ -393,7 +392,7 @@ Main() {
                  _install_OdroidN2_image ;;
        Pinebook) grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_Pinebook_image ;;
-       Radxa5b)  grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+       Radxa5b)  cp $WORKDIR/Radxa5b-base-pkglist.txt $WORKDIR/ARM-pkglist.txt
                  _install_Radxa5b_image ;; 
        ServRPi)  cp $WORKDIR/pkglist-rpi4-server.txt $WORKDIR/ARM-pkglist.txt
                  _install_RPi_image ;;
@@ -405,7 +404,8 @@ Main() {
     _arch_chroot
     case $PLATFORM in
       OdroidN2 | Servodn)  dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
-      Pinebook)  dd if=$WORKDIR/MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
+      Pinebook)  dd if=$WORKDIR/MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync
+      sleep 5 ;;
     esac
 
 #    if $CREATE ; then
