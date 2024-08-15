@@ -210,17 +210,15 @@ LXQT gvfs
 LXQT gvfs-mtp
 LXQT libstatgrab
 LXQT libsysstat
-LXQT lm_sensors
+LXQT libmd
+LXQT libbsd
 LXQT lxqt
 LXQT lxqt-archiver
 LXQT network-manager-applet
 LXQT oxygen-icons
 LXQT pavucontrol-qt
 LXQT print-manager
-LXQT qt5-translations
-LXQT sddm
 LXQT vlc
-LXQT xdg-utils
 LXQT xscreensaver
 LXQT xsettingsd
 
