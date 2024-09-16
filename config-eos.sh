@@ -99,7 +99,6 @@ _edit_mirrorlist() {
     fi
 }   # end of function _edit_mirrorlist
 
-
 _enable_paralleldownloads() {
     local user_confirmation
     local numdwn
@@ -257,6 +256,18 @@ _precheck_setup() {
     if [ "$?" == "1" ]; then
       nmtui-connect
    fi
+
+   # offer to enable RPi bluetooth
+   bluetooth=$(neofetch | grep Host | awk '{print $2,$3}')
+   if [ "$bluetooth" == "Raspberry Pi" ]; then
+      whiptail  --title "EndeavourOS ARM Setup - Enable Bluetooth"  --yesno --yes-button "No" --no-button "Yes" "                     Bluetooth is disabled by default\n                      on RPi 4b, RPi 5, and RPi 400.\n\n                     Do you wish to enable Bluetooth? \n\n" 10 80 15 3>&2 2>&1 1>&3
+      if [ "$?" == "1" ]; then
+         sed -i 's/dtoverlay=disable-bt/# dtoverlay=disable-bt/g' /boot/config.txt
+         systemctl enable bluetooth
+         whiptail  --title "EndeavourOS ARM Setup - Bluetooth enabled"  --msgbox "               Bluetooth has been enabled in /boot/config.txt\n               See more on the EndeavourOS WiKi bluetooth page.\n          https://discovery.endeavouros.com/audio/bluetooth/2021/03/ \n\n" 10 80 15 3>&2 2>&1 1>&3
+      fi
+   fi
+
    _edit_mirrorlist
    _enable_paralleldownloads
    clear

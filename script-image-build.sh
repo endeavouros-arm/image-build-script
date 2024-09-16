@@ -9,12 +9,12 @@ _partition_Radxa5b() {
 #    printf "\nBoth check sums should be the same\n"
     parted --script -a minimal $DEVICENAME \
     mklabel gpt \
-    mkpart primary 17MB 400MB \
-    mkpart primary 400MB $DEVICESIZE"MB" \
+    mkpart primary 17MiB 34MiB \
+    mkpart primary 34MiB $DEVICESIZE"MiB" \
     quit
 
-    dd if=$WORKDIR/rk3588-uboot.bin ibs=1 skip=0 count=15728640 of=$DEVICENAME
-    printf "\n\n${CYAN}36b9ce1a8ebda8e5d03dae8b9be5f361${NC}\n"
+    dd if=$WORKDIR/rk3588-uboot-j.bin ibs=1 skip=0 count=15728640 of=$DEVICENAME
+    printf "\n\n${CYAN}cdd31c860ee3a39d315d9f2a8382f8e2${NC}\n"
     dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
     printf "\n\n${CYAN}Both check sums should be the same.  Then Press Enter.${NC}\n\n"
     read z
@@ -105,8 +105,9 @@ _install_Radxa5b_image() {
 
     pacstrap -cGM MP - < $WORKDIR/ARM-pkglist.txt
     _copy_stuff_for_chroot
-    cp -r $WORKDIR/extlinux $WORKDIR/MP/boot/
-    _fstab_uuid
+    cp -r $WORKDIR/rk3588-boot/extlinux $WORKDIR/MP/boot/
+    cp -r $WORKDIR/rk3599-boot/dtbs $WORKDIR/MP/boot
+#    _fstab_uuid
     # change extlinux.conf to UUID instead of partition label.
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
     uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
@@ -172,6 +173,7 @@ _install_RPi_image() {
 _partition_format_mount() {
 
    fallocate -l 8.5G test.img
+#   fallocate -l 10G test.img   # For Radxa 5B
    fallocate -d test.img
 
    DVN=$(losetup --find --show test.img)
@@ -179,13 +181,15 @@ _partition_format_mount() {
    printf "\n${CYAN} DEVICENAME ${NC}\n"
    echo $DEVICENAME
    echo $DVN
-   printf "\nlosetup -a = "
-   losetup -a
-   printf "\n${CYAN}Ensure that only /dev/loop0 exists, then press Enter${NC}\n"
-   read z
+
+   if [ "$DEVICENAME" != "/dev/loop0" ]; then
+      printf "\n\n${RED}A loop device exists. Delete extra loop devices.${NC}\n\n"
+      exit
+   fi
    ##### Determine data device size in MiB and partition ###
    printf "\n${CYAN}Partitioning, & formatting storage device...${NC}\n"
    DEVICESIZE=8192
+#   DEVICESIZE=10100  #For Radxa 5B
    printf "\n${CYAN}Partitioning storage device $DEVICENAME...${NC}\n"
 
    case $PLATFORM in   
@@ -204,7 +208,9 @@ _partition_format_mount() {
    mkdir $WORKDIR/MP
    mount $PARTNAME2 $WORKDIR/MP
    mkdir $WORKDIR/MP/boot
+#   if [ "$PLATFORM" != "Radxa5b" ]; then
    mount $PARTNAME1 $WORKDIR/MP/boot
+#   fi
 } # end of function _partition_format_mount
 
 _check_if_root() {
@@ -379,7 +385,7 @@ Main() {
     _check_if_root
     _read_options "$@"
 
-    rm -rf $WORKDIR/test.img $WORKDIR/test.img.xz
+    rm -rf $WORKDIR/test.img $WORKDIR/test.img.xz $WORKDIR/MP
 
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     cp $WORKDIR/base-packages.txt  $WORKDIR/ARM-pkglist.txt
@@ -392,7 +398,8 @@ Main() {
                  _install_OdroidN2_image ;;
        Pinebook) grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
                  _install_Pinebook_image ;;
-       Radxa5b)  cp $WORKDIR/Radxa5b-base-pkglist.txt $WORKDIR/ARM-pkglist.txt
+       Radxa5b)  grep -w "$PLATFORM" $WORKDIR/base-device-addons.txt | awk '{print $2}' >> $WORKDIR/ARM-pkglist.txt
+#       cp $WORKDIR/Radxa5b-base-pkglist.txt $WORKDIR/ARM-pkglist.txt
                  _install_Radxa5b_image ;; 
        ServRPi)  cp $WORKDIR/pkglist-rpi4-server.txt $WORKDIR/ARM-pkglist.txt
                  _install_RPi_image ;;
@@ -402,10 +409,12 @@ Main() {
     rm $WORKDIR/ARM-pkglist.txt
     printf "\n\n${CYAN}arch-chroot for configuration.${NC}\n\n"
     _arch_chroot
+
     case $PLATFORM in
       OdroidN2 | Servodn)  dd if=$WORKDIR/MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1 ;;
       Pinebook)  dd if=$WORKDIR/MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync
-      sleep 5 ;;
+                 sleep 5 ;;
+#      Radxa5b) mv $WORKDIR/MP/boot/* /MP/root ;;
     esac
 
 #    if $CREATE ; then
@@ -416,8 +425,20 @@ Main() {
 #       fi
 #    fi
 
-    umount $WORKDIR/MP/boot $WORKDIR/MP
-    rm -rf $WORKDIR/MP
+#   if [ "$PLATFORM" != "Radxa5b" ]; then
+   umount $WORKDIR/MP/boot $WORKDIR/MP
+#   fi
+#   umount $WORKDIR/MP
+   rm -rf $WORKDIR/MP
+
+#   if mountpoint -q $WORKDIR/MP
+#   then
+#     printf "\n\nloop0 is still mounted\n"
+#     read z
+#   fi
+#   if [ "$PLATFORM" == "Radxa5b" ]; then
+#     _create_image
+#   fi
 
     losetup -d /dev/loop0
 
@@ -428,6 +449,8 @@ Main() {
             printf "\n${CYAN}Created Image${NC}\n\n"
 #        fi
     fi
+
+#    losetup -d /dev/loop0
 
     exit
 }

@@ -93,7 +93,7 @@ Main() {
    case $PLATFORM_NAME in
      RPi4 | RPi5 | ServRPi) cp /boot/config.txt /boot/config.txt.orig
                             cp /home/alarm/rpi4-config.txt /boot/config.txt ;;
-     Radxa5b) mkinitcpio -P ;;
+#     Radxa5b) mkinitcpio -P ;;
    esac
 
 #   if [ "$TYPE" == "Image" ]; then

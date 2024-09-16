@@ -125,6 +125,7 @@ XFCE4 xfce4-whiskermenu-plugin
 XFCE4 xfce4-xkb-plugin
 
 CINNAMON arc-gtk-theme-eos
+CINNAMON blueberry
 CINNAMON eos-lightdm-slick-theme
 CINNAMON eos-qogir-icons
 CINNAMON eos-settings-cinnamon
@@ -153,6 +154,7 @@ CINNAMON x-apps
 CINNAMON xdg-user-dirs-gtk
 
 MATE arc-gtk-theme-eos
+MATE blueberry
 MATE eos-settings-mate
 MATE eos-lightdm-slick-theme
 MATE eos-qogir-icons
@@ -203,6 +205,7 @@ BUDGIE xdg-user-dirs-gtk
 
 LXQT eos-settings-lxqt
 LXQT eos-sddm-theme
+LXQT blueman
 LXQT breeze
 LXQT breeze-gtk
 LXQT featherpad
@@ -210,8 +213,6 @@ LXQT gvfs
 LXQT gvfs-mtp
 LXQT libstatgrab
 LXQT libsysstat
-LXQT libmd
-LXQT libbsd
 LXQT lxqt
 LXQT lxqt-archiver
 LXQT network-manager-applet
@@ -226,6 +227,7 @@ LXDE arc-gtk-theme-eos
 LXDE eos-settings-lxde
 LXDE eos-lxdm-gtk3
 LXDE eos-qogir-icons
+LXDE blueman
 LXDE file-roller
 LXDE galculator
 LXDE gnome-screenshot
@@ -262,6 +264,7 @@ I3WM arandr
 I3WM arc-gtk-theme-eos
 I3WM archlinux-xdg-menu
 I3WM awesome-terminal-fonts
+I3WM blueman
 I3WM dex
 I3WM dmenu
 I3WM dunst
