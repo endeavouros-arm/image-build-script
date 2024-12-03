@@ -204,13 +204,17 @@ BUDGIE sushi
 BUDGIE xdg-user-dirs-gtk
 
 LXQT eos-settings-lxqt
+LXQT eos-plasma-sddm-config
 LXQT eos-sddm-theme
 LXQT blueman
 LXQT breeze
 LXQT breeze-gtk
+LXQT ffmpegthumbs
 LXQT featherpad
 LXQT gvfs
 LXQT gvfs-mtp
+LXQT kde-cli-tools
+LXQT kde-gtk-config
 LXQT libstatgrab
 LXQT libsysstat
 LXQT lxqt
@@ -219,9 +223,18 @@ LXQT network-manager-applet
 LXQT oxygen-icons
 LXQT pavucontrol-qt
 LXQT print-manager
+LXQT sddm
+LXQT sddm-kcm
 LXQT vlc
 LXQT xscreensaver
 LXQT xsettingsd
+LXQT kwin
+LXQT lxqt-wayland-session
+LXQT wayland
+LXQT kwayland-integration
+LXQT wayland-utils
+LXQT xwaylandvideobridge
+LXQT xorg-xwayland
 
 LXDE arc-gtk-theme-eos
 LXDE eos-settings-lxde

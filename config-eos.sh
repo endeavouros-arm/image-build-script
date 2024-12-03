@@ -207,6 +207,21 @@ _completed_notification() {
     printf "Press any key exits the script, removes all install files, and reboots the computer.${NC}\n\n"
 }
 
+_lxqt_instuctions() {
+   printf "\n####  You have installed LXQT for your desktop ####\n"
+   printf "\n${RED}After the first boot, do the following:\n"
+   printf "In the sddm screen, in the upper left corner, change \"LXQT Desktop Wayland\" to \"LXQT Desktop x11\"\n"
+   printf "Then login to LXQT.  A window appears asking to select \"KWIN\" or \"Openbox\" choose either one${NC}\n"
+   printf "\n${CYAN}Once booted, in the \"Application Launcher\" choose Preferences - Session Settings\n"
+   printf "click on \"\Wayland Settings (Experimental)\"icon\n"
+   printf "under \"Wayland Compositor:\" use the down arrow and choos \"kwin_wayland\"\n"
+   printf "under \"Screenlock Command:\" type in xscreensaver\n"
+   printf "still in \"Session Settings\" click on the \"Basic Settings\" icon\n"
+   printf "under \"Window Manager\" click on the down arrow.\n"
+   printf "there you choose which x11 window manager (kwin_x11 or openbox) will be enabled after the next logout/reboot\n\n"
+   printf "In your home directory will be a text file named \"LXQT_instructions.txt\" with the above instructions${NC}\n"
+}
+
 _precheck_setup() {
     local script_directory
     local whiptail_installed
@@ -442,6 +457,12 @@ _desktop_setup() {
         pacman -S --needed --noconfirm - < packages
         rm packages
     fi
+    if [ "$DENAME" == "LXQT" ]; then
+        rm /usr/share/xsessions/openbox.desktop /usr/share/xsessions/openbox-kde.desktop
+        rm /usr/share/xsessions/plasmax11.desktop /usr/share/wayland-sessions/plasma.desktop
+        sed -i 's/Name=LXQt Desktop/Name=LXQT Desktop x11/g' /usr/share/xsessions/lxqt.desktop
+        sed -i 's/Name=LXQt (Wayland)/Name=LXQT Desktop Wayland/g' /usr/share/wayland-sessions/lxqt-wayland.desktop
+    fi
     case $DENAME in
        PLASMA | LXQT) systemctl enable sddm.service ;;
        GNOME) systemctl enable gdm ;;
@@ -558,7 +579,14 @@ Main() {
     rm /etc/systemd/system/config-eos.service
     rm /root/config-eos.sh
     rm /root/DE-pkglist.txt
+    if [ "$DENAME" == "LXQT" ]; then
+       cp /root/lxqt_instructions.txt /home/$USERNAME/
+    fi
+    rm /root/lxqt_instructions.txt
     _completed_notification
+    if [ "$DENAME" == "LXQT" ]; then
+       _lxqt_instuctions
+    fi
     read -n1 x
     systemctl reboot
 }  # end of Main

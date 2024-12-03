@@ -34,8 +34,8 @@ _partition_OdroidN2() {
     parted --script -a minimal $DEVICENAME \
     mklabel msdos \
     unit mib \
-    mkpart primary fat32 2MiB 258MiB \
-    mkpart primary 258MiB $DEVICESIZE"MiB" \
+    mkpart primary fat32 2MiB 514MiB \
+    mkpart primary 514MiB $DEVICESIZE"MiB" \
     quit
 }
 
@@ -63,6 +63,7 @@ _copy_stuff_for_chroot() {
     cp $WORKDIR/resize-fs.sh $WORKDIR/MP/root
     cp $WORKDIR/DE-pkglist.txt $WORKDIR/MP/root
     cp $WORKDIR/smb.conf $WORKDIR/MP/home/alarm
+    cp $WORKDIR/lxqt_instructions.txt $WORKDIR/MP/root
     cp $WORKDIR/lsb-release $WORKDIR/MP/home/alarm
     cp $WORKDIR/os-release $WORKDIR/MP/home/alarm
     case $PLATFORM in
