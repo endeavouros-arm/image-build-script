@@ -38,6 +38,7 @@ eos-update-notifier
 ethtool
 exfatprogs
 fakeroot
+fastfetch
 ffmpegthumbnailer
 findutils
 firefox

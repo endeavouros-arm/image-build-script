@@ -209,13 +209,14 @@ _completed_notification() {
 
 _lxqt_instuctions() {
    printf "\n####  You have installed LXQT for your desktop ####\n"
+   printf "\nWayland is disabled by default, enable Wayland as follows\n"
    printf "\n${RED}After the first boot, do the following:\n"
    printf "In the sddm screen, in the upper left corner, change \"LXQT Desktop Wayland\" to \"LXQT Desktop x11\"\n"
    printf "Then login to LXQT.  A window appears asking to select \"KWIN\" or \"Openbox\" choose either one${NC}\n"
    printf "\n${CYAN}Once booted, in the \"Application Launcher\" choose Preferences - Session Settings\n"
    printf "click on \"\Wayland Settings (Experimental)\"icon\n"
    printf "under \"Wayland Compositor:\" use the down arrow and choos \"kwin_wayland\"\n"
-   printf "under \"Screenlock Command:\" type in xscreensaver\n"
+   printf "under \"Screenlock Command:\" type in \"loginctl lock-session\"\n"
    printf "still in \"Session Settings\" click on the \"Basic Settings\" icon\n"
    printf "under \"Window Manager\" click on the down arrow.\n"
    printf "there you choose which x11 window manager (kwin_x11 or openbox) will be enabled after the next logout/reboot\n\n"

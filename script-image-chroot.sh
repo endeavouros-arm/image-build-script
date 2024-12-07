@@ -20,7 +20,7 @@ _finish_up() {
     rm /root/script-image-chroot.sh
     rm /root/platformname
 #    rm /home/alarm/smb.conf
-    rm /root/type
+#    rm /root/type
     case $PLATFORM_NAME in
        ServRPi | Servodn) cp /home/alarm/config-server.service /etc/systemd/system/
                           chmod +x /root/config-server.sh
@@ -50,7 +50,7 @@ _finish_up() {
 Main() {
 
     PLATFORM_NAME=" "
-    TYPE=" "
+#    TYPE=" "
 
    # Declare color variables
       GREEN='\033[0;32m'
@@ -61,11 +61,11 @@ Main() {
    # STARTS HERE
    dmesg -n 1 # prevent low level kernel messages from appearing during the script
 
-   # read in platformname and type passed by script-image-build.sh
+   # read in platformname passed by script-image-build.sh
    file="/root/platformname"
    read -d $'\x04' PLATFORM_NAME < "$file"
-   file="/root/type"
-   read -d $'\x04' TYPE < "$file"
+#   file="/root/type"
+#   read -d $'\x04' TYPE < "$file"
 
    _check_if_root
 #   sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf

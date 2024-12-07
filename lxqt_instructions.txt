@@ -7,8 +7,7 @@ Then login to LXQT.  A window appears asking to select "KWIN" or "Openbox" choos
 Once booted, in the "Application Launcher" choose Preferences - Session Settings
 click on "Wayland Settings (Experimental)"icon
 under "Wayland Compositor:" use the down arrow and choos "kwin_wayland"
-under "Screenlock Command:" type in xscreensaver
-
+under "Screenlock Command:" type in "loginctl lock-session"
 still in "Session Settings" click on the "Basic Settings" icon
 under "Window Manager" click on the down arrow
 there you choose which x11 window manager (kwin_x11 or openbox) will be enabled after the next logout/reboot
