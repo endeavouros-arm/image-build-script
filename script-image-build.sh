@@ -208,6 +208,10 @@ _partition_format_mount() {
       Pinebook)              _partition_Pinebook ;;
       Radxa5b)               _partition_Radxa5b ;;
    esac
+
+   if [ "$PLATFORM" == "ServRPi" ] || [ "$PLATFORM" == "Servodn" ]; then
+      $FORMAT="ext4"
+   fi
   
    printf "\n${CYAN}Formatting storage device $DEVICENAME...${NC}\n"
    printf "\n${CYAN}If \"/dev/sdx contains a ext4 file system Labelled XXXX\" or similar appears, Enter: y${NC}\n\n\n"
@@ -216,14 +220,11 @@ _partition_format_mount() {
    PARTNAME2=$DEVICENAME"p2"
    case $FORMAT in
         ext4)  mkfs.ext4 -F -L ROOT_ENOS $PARTNAME2
-#               mkdir /mnt
-#               mkdir /mnt/boot
                mount $PARTNAME2 /mnt
 #               if [ "$PLATFORM" != "Radxa5b" ]; then
 #               mount $PARTNAME1 /mnt/boot
                mkdir /mnt/boot
                mount $PARTNAME1 /mnt/boot
-               echo
 #               fi
                ;;
         btrfs) mkfs.btrfs -f -L ROOT_ENOS $PARTNAME2
@@ -280,10 +281,16 @@ _create_image(){
        Servodn)  DEVICENAME="server-odroid-n2" ;;
     esac
           xz -kvfT0 -2 test.img
-          cp test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-$DEVICENAME-latest.img.xz
+          case $FORMAT in
+             ext4) cp test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-$DEVICENAME-latest.img.xz ;;
+             btrfs) cp test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-$DEVICENAME-btrfs-latest.img.xz ;;
+          esac
           printf "\n\nCreating the image is finished.\nand will calculate a sha512sum\n\n"
           cd /home/$USERNAME/endeavouros-arm/test-images/
-          sha512sum enosLinuxARM-$DEVICENAME-latest.img.xz > "enosLinuxARM-$DEVICENAME-latest.img.xz.sha512sum"
+          case $FORMAT in
+             ext4) sha512sum enosLinuxARM-$DEVICENAME-latest.img.xz > "enosLinuxARM-$DEVICENAME-latest.img.xz.sha512sum" ;;
+             btrfs) sha512sum enosLinuxARM-$DEVICENAME-latest.img.xz > "enosLinuxARM-$DEVICENAME-btrfs-latest.img.xz.sha512sum" ;;
+          esac
           cd $WORKDIR
 }  # end of function _create_image
 
