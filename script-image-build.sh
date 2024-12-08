@@ -132,14 +132,28 @@ _install_Pinebook_image() {
     uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
     # uuidno should now be root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
     old=$(grep 'root=' /mnt/boot/extlinux/extlinux.conf | awk '{print $5}')
-    sed -i "s#$old#$uuidno#" /mnt/boot/extlinux/extlinux.conf
+
+    case $FORMAT in
+        btrfs) btrfsoptions=" rootflags=subvol=@ rootfstype=btrfs fsck.repair=no "
+               uuidno=" "$uuidno$btrfsoptions
+               sed -i "s#$old#$uuidno#" /mnt/boot/extlinux/extlinux.conf
+               ;;
+        ext4)  sed -i "s#$old#$uuidno#" /mnt/boot/extlinux/extlinux.conf
+               ;;
+    esac
+
+
+
+#    old=$(grep 'root=' /mnt/boot/extlinux/extlinux.conf | awk '{print $5}')
+#    sed -i "s#$old#$uuidno#" /mnt/boot/extlinux/extlinux.conf
 }   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
 
     local partition
     local uuidno
-    local old
+    local boot_options
+    local new
 
     pacstrap -cGM /mnt - < ARM-pkglist.txt
     _copy_stuff_for_chroot
@@ -149,9 +163,21 @@ _install_OdroidN2_image() {
     # change boot.ini to UUID instead of partition label.
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
     uuidno="\"root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
-    # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
-    old=$(grep 'root=' mnt/boot/boot.ini | awk '{print $3}')
-    sed -i "s#$old#$uuidno#" /mnt/boot/boot.ini
+    # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
+#    old=$(grep 'root=' mnt/boot/boot.ini | awk '{print $3}')
+    case $FORMAT in
+        btrfs) boot_options=" rootwait rw fsck.repair=no\""
+               new="setenv bootargs "$uuidno"$boot_options"
+               sed -i "s/^setenv bootargs \"root=.*/$new/" /mnt/boot/boot.ini
+               btrfsoptions="setenv bootargs \"\${bootargs} rootflags=subvol=@ rootfstype=btrfs\""
+               sed -i "/^setenv bootargs \"root=.*/a $btrfsoptions" /mnt/boot/boot.ini
+               ;;
+        ext4)  boot_options=" rootwait rw fsck.repair=yes\""
+               new="setenv bootargs "$uuidno"$boot_options"
+               sed -i "s/^setenv bootargs \"root=.*/$new/" /mnt/boot/boot.ini
+               ;;
+    esac
+#    sed -i "s#$old#$uuidno#" /mnt/boot/boot.ini
 }   # End of function _install_OdroidN2_image
 
 
@@ -159,7 +185,8 @@ _install_RPi_image() {
 
     local partition
     local uuidno
-    local old
+    local boot_options
+    local new
 
     pacstrap -cGM /mnt - < ARM-pkglist.txt
     _copy_stuff_for_chroot
@@ -167,17 +194,12 @@ _install_RPi_image() {
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
     uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
     # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX "
-#    old=$(grep 'root=' /mnt/boot/cmdline.txt | awk '{print $1}')
-#    sed -i "s#$old#$uuidno#" /mnt/boot/cmdline.txt
-
     case $FORMAT in
-        btrfs) boot_options=" rootflags=subvol=@ rootfstype=btrfs fsck.repair=no rw rootwait console=serial0,115200 console=tty1"
-               new=$uuidno"$boot_options" ;;
-        ext4)  boot_options=" rw rootwait console=serial0,115200 console=tty1 fsck.repair=yes"
-               new=$uuidno"$boot_options" ;;
+        btrfs) boot_options=" rootflags=subvol=@ rootfstype=btrfs fsck.repair=no rw rootwait console=serial0,115200 console=tty1" ;;
+        ext4)  boot_options=" rw rootwait console=serial0,115200 console=tty1 fsck.repair=yes" ;;
     esac
+    new=$uuidno"$boot_options"
     printf "$new\n" > /mnt/boot/cmdline.txt
-#    sed -i "s#$old#$new#" /mnt/boot/cmdline.txt
 }   # End of function _install_RPi_image
 
 _partition_format_mount() {
