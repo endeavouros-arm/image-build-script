@@ -1,5 +1,5 @@
 
-PLASMA eos-plasma-sddm-config
+PLASMA eos-breeze-sddm
 PLASMA eos-settings-plasma
 PLASMA ark
 PLASMA bluedevil
@@ -204,7 +204,7 @@ BUDGIE sushi
 BUDGIE xdg-user-dirs-gtk
 
 LXQT eos-settings-lxqt
-LXQT eos-plasma-sddm-config
+LXQT eos-breeze-sddm
 LXQT eos-sddm-theme
 LXQT blueman
 LXQT breeze

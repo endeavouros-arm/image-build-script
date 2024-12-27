@@ -28,7 +28,7 @@ dosfstools
 duf
 endeavouros-keyring
 endeavouros-mirrorlist
-endeavouros-theming
+endeavouros-branding
 eos-apps-info
 eos-hooks
 eos-log-tool
