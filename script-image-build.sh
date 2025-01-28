@@ -62,7 +62,7 @@ _copy_stuff_for_chroot() {
     cp $WORKDIR/resize-fs.service /mnt/root
     cp $WORKDIR/resize-fs.sh /mnt/root
     cp $WORKDIR/DE-pkglist.txt /mnt/root
-    cp $WORDIR/smb.conf /mnt/home/alarm
+    cp $WORKDIR/smb.conf /mnt/home/alarm
     cp $WORKDIR/lxqt_instructions.txt /mnt/root
     cp $WORKDIR/lsb-release /mnt/home/alarm
     cp $WORKDIR/os-release /mnt/home/alarm

@@ -100,6 +100,7 @@ XFCE4 gvfs-gphoto2
 XFCE4 gvfs-mtp
 XFCE4 gvfs-nfs
 XFCE4 gvfs-smb
+XFCE4 labwc
 XFCE4 lightdm
 XFCE4 lightdm-slick-greeter
 XFCE4 mousepad
@@ -205,7 +206,7 @@ BUDGIE xdg-user-dirs-gtk
 
 LXQT eos-settings-lxqt
 LXQT eos-breeze-sddm
-LXQT eos-sddm-theme
+# LXQT eos-sddm-theme
 LXQT blueman
 LXQT breeze
 LXQT breeze-gtk
