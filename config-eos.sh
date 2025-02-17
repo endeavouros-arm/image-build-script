@@ -459,8 +459,8 @@ _desktop_setup() {
         rm packages
     fi
     if [ "$DENAME" == "LXQT" ]; then
-        rm /usr/share/xsessions/openbox.desktop /usr/share/xsessions/openbox-kde.desktop
-        rm /usr/share/xsessions/plasmax11.desktop /usr/share/wayland-sessions/plasma.desktop
+#        rm /usr/share/xsessions/openbox.desktop /usr/share/xsessions/openbox-kde.desktop
+#        rm /usr/share/xsessions/plasmax11.desktop /usr/share/wayland-sessions/plasma.desktop
         sed -i 's/Name=LXQt Desktop/Name=LXQT Desktop x11/g' /usr/share/xsessions/lxqt.desktop
         sed -i 's/Name=LXQt (Wayland)/Name=LXQT Desktop Wayland/g' /usr/share/wayland-sessions/lxqt-wayland.desktop
     fi
@@ -571,7 +571,17 @@ Main() {
        _server_setup
     fi
 #    eos-rankmirrors
+
+    if [ "$DENAME" == "XFCE4" ]; then
+       cp /root/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/
+    fi
     _change_user_alarm   # remove user alarm and create new user of choice
+    if [ "$DENAME" == "XFCE4" ]; then
+       cp /root/xfce4-backgrounds/eos-wallpaper-1.png /usr/share/backgrounds/xfce/
+       cp /root/xfce4-backgrounds/eos-wallpaper-2.png /usr/share/backgrounds/xfce/
+       cp /root/xfce4-backgrounds/eos-wallpaper-3.png /usr/share/backgrounds/xfce/
+       cp /root/xfce4-backgrounds/eos-wallpaper-4.png /usr/share/backgrounds/xfce/
+    fi
     systemctl disable resize-fs.service
     rm /etc/systemd/system/resize-fs.service
     rm /root/resize-fs.service
@@ -580,6 +590,8 @@ Main() {
     rm /etc/systemd/system/config-eos.service
     rm /root/config-eos.sh
     rm /root/DE-pkglist.txt
+    rm /root/xfce4-desktop.xml
+    rm -rf /root/xfce4-backgrounds
     if [ "$DENAME" == "LXQT" ]; then
        cp /root/lxqt_instructions.txt /home/$USERNAME/
     fi

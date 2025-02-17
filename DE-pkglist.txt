@@ -45,7 +45,6 @@ PLASMA sddm
 PLASMA sddm-kcm
 PLASMA spectacle
 PLASMA xdg-desktop-portal-kde
-PLASMA xsettingsd
 PLASMA xwaylandvideobridge
 
 GNOME arc-gtk-theme-eos
@@ -86,11 +85,11 @@ GNOME xdg-desktop-portal-gnome
 GNOME xdg-desktop-portal
 GNOME xdg-user-dirs-gtk
 
+XFCE4 endeavouros-xfce4-terminal-colors
+XFCE4 eos-settings-xfce4
 XFCE4 arc-gtk-theme-eos
 XFCE4 eos-lightdm-slick-theme
 XFCE4 eos-qogir-icons
-XFCE4 eos-settings-xfce4
-XFCE4 endeavouros-xfce4-terminal-colors
 XFCE4 blueman
 XFCE4 file-roller
 XFCE4 galculator
@@ -173,10 +172,10 @@ MATE mpv
 MATE network-manager-applet
 MATE xdg-user-dirs-gtk
 
-BUDGIE arc-gtk-theme-eos
 BUDGIE eos-settings-budgie
 BUDGIE eos-lightdm-slick-theme
 BUDGIE eos-qogir-icons
+BUDGIE arc-gtk-theme-eos
 BUDGIE budgie-control-center
 BUDGIE budgie-desktop
 BUDGIE budgie-desktop-view
@@ -205,8 +204,7 @@ BUDGIE sushi
 BUDGIE xdg-user-dirs-gtk
 
 LXQT eos-settings-lxqt
-LXQT eos-breeze-sddm
-# LXQT eos-sddm-theme
+LXQT eos-sddm-theme
 LXQT blueman
 LXQT breeze
 LXQT breeze-gtk
@@ -228,7 +226,6 @@ LXQT sddm
 LXQT sddm-kcm
 LXQT vlc
 LXQT xscreensaver
-LXQT xsettingsd
 LXQT kwin
 LXQT lxqt-wayland-session
 LXQT wayland
