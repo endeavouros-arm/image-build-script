@@ -45,7 +45,6 @@ PLASMA sddm
 PLASMA sddm-kcm
 PLASMA spectacle
 PLASMA xdg-desktop-portal-kde
-PLASMA xwaylandvideobridge
 
 GNOME arc-gtk-theme-eos
 GNOME eos-settings-gnome
@@ -231,7 +230,6 @@ LXQT lxqt-wayland-session
 LXQT wayland
 LXQT kwayland-integration
 LXQT wayland-utils
-LXQT xwaylandvideobridge
 LXQT xorg-xwayland
 
 LXDE arc-gtk-theme-eos
