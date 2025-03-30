@@ -451,6 +451,8 @@ _user_input() {
 _desktop_setup() {
 
     if [ "$DENAME" != "NONE" ]; then
+        rm /etc/pacman.d/endeavouros-mirrorlist.pacnew
+        eos-rankmirrors
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
         printf "${CYAN}Installing $DENAME${NC}\n\n}"
         pacman -Syyu --needed --noconfirm - < packages
