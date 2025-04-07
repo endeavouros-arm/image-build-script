@@ -57,14 +57,14 @@ _copy_stuff_for_chroot() {
                           ;;
        *)                 cp $WORKDIR/config-eos.sh /mnt/root/
                           cp $WORKDIR/config-eos.service /mnt/home/alarm/
+                          cp $WORKDIR/lxqt_instructions.txt /mnt/root
+                          cp $WORKDIR/xfce4-desktop.xml /mnt/root
+                          cp -R $WORKDIR/xfce4-backgrounds /mnt/root
                           ;;
     esac
     cp $WORKDIR/resize-fs.service /mnt/root
     cp $WORKDIR/resize-fs.sh /mnt/root
     cp $WORKDIR/DE-pkglist.txt /mnt/root
-    cp $WORKDIR/lxqt_instructions.txt /mnt/root
-    cp $WORKDIR/xfce4-desktop.xml /mnt/root
-    cp -R $WORKDIR/xfce4-backgrounds /mnt/root
     cp $WORKDIR/smb.conf /mnt/home/alarm
     cp $WORKDIR/lsb-release /mnt/home/alarm
     cp $WORKDIR/os-release /mnt/home/alarm

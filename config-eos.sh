@@ -574,14 +574,15 @@ Main() {
 
     if [ "$DENAME" == "XFCE4" ]; then
        cp /root/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/
-    fi
-    _change_user_alarm   # remove user alarm and create new user of choice
-    if [ "$DENAME" == "XFCE4" ]; then
        cp /root/xfce4-backgrounds/eos-wallpaper-1.png /usr/share/backgrounds/xfce/
        cp /root/xfce4-backgrounds/eos-wallpaper-2.png /usr/share/backgrounds/xfce/
        cp /root/xfce4-backgrounds/eos-wallpaper-3.png /usr/share/backgrounds/xfce/
        cp /root/xfce4-backgrounds/eos-wallpaper-4.png /usr/share/backgrounds/xfce/
     fi
+    rm /root/xfce4-desktop.xml
+    rm -rf /root/xfce4-backgrounds
+    _change_user_alarm   # remove user alarm and create new user of choice
+
     systemctl disable resize-fs.service
     rm /etc/systemd/system/resize-fs.service
     rm /root/resize-fs.service
@@ -590,8 +591,6 @@ Main() {
     rm /etc/systemd/system/config-eos.service
     rm /root/config-eos.sh
     rm /root/DE-pkglist.txt
-    rm /root/xfce4-desktop.xml
-    rm -rf /root/xfce4-backgrounds
     if [ "$DENAME" == "LXQT" ]; then
        cp /root/lxqt_instructions.txt /home/$USERNAME/
     fi
