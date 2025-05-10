@@ -555,6 +555,7 @@ Main() {
     pacman-key --populate archlinuxarm endeavouros 
     pacman-key --lsign-key EndeavourOS
     pacman-key --lsign-key builder@archlinuxarm.org
+    sleep 10
     pacman -Syy
     _user_input
     _set_time_zone
