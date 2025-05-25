@@ -83,7 +83,6 @@ nano
 nano-syntax-highlighting
 nbd
 ndisc6
-neofetch
 netctl
 net-tools
 networkmanager

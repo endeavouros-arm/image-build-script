@@ -18,6 +18,7 @@ dnsmasq
 dosfstools
 ethtool
 fakeroot
+fastfetch
 file
 firewalld
 git
@@ -35,7 +36,6 @@ mkinitcpio-busybox
 mtools
 nano
 ncurses
-neofetch
 netctl
 nettle
 net-tools
