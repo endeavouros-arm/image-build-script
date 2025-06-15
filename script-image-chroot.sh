@@ -35,13 +35,11 @@ _finish_up() {
     cp /home/alarm/os-release /etc/
     sed -i 's/Arch/EndeavourOS/g' /etc/issue
     sed -i 's/Arch/EndeavourOS/g' /usr/share/factory/etc/issue
-#    sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" /etc/mkinitcpio.d/*.preset
-#    rm /boot/Image.gz
-#    rm /boot/*fallback.img
 
     systemctl enable NetworkManager
     systemctl enable systemd-timesyncd
     systemctl enable firewalld
+    sudo ln -s /usr/lib/libgpgme.so.45 /usr/lib/libgpgme.so.11
     printf "\n${CYAN}Ready to create an image.${NC}\n"
 }   # end of function _finish_up
 
