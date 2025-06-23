@@ -454,6 +454,10 @@ _desktop_setup() {
         rm /etc/pacman.d/endeavouros-mirrorlist.pacnew
         eos-rankmirrors
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
+        DeviceName=$(fastfetch | grep Host: | awk '{print $2}')
+        if [ "$DeviceName" == "Hardkernel" ] && [ "$DENAME" == "PLASMA" ]; then
+           printf "plasma-x11-session\nkwin-x11\n" >> packages
+        fi
         printf "${CYAN}Installing $DENAME${NC}\n\n}"
         pacman -Syyu --needed --noconfirm - < packages
         rm packages
