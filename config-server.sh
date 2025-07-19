@@ -384,7 +384,11 @@ _precheck_setup() {
        fi
     done
 
-    ping -c 3 endeavouros.com -W 5
+    ping -c 3 208.67.220.220 -W 5
+    if [ "$?" != "0" ]
+    then
+       ping -c 3 208.67.222.222 -W 5
+    fi
     if [ "$?" != "0" ]
     then
        printf "\n\n${RED}No Internet Connection was detected\nFix your Internet Connection and try again${NC}\n\n"
