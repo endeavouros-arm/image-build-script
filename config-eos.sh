@@ -453,7 +453,7 @@ _user_input() {
 }   # end of function _user_input
 
 _desktop_setup() {
-    rm /etc/pacman.d/endeavouros-mirrorlist.pacnew
+    # rm /etc/pacman.d/endeavouros-mirrorlist.pacnew
     eos-rankmirrors
     if [ "$DENAME" == "NONE" ]; then
         printf "${CYAN}Updating Base Packages${NC}}\n\n"
