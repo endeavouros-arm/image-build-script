@@ -232,10 +232,6 @@ LXQT kwayland-integration
 LXQT wayland-utils
 LXQT xorg-xwayland
 
-LXDE arc-gtk-theme-eos
-LXDE eos-settings-lxde
-LXDE eos-lxdm-gtk3
-LXDE eos-qogir-icons
 LXDE blueman
 LXDE file-roller
 LXDE galculator
@@ -248,7 +244,7 @@ LXDE gvfs-mtp
 LXDE gvfs-nfs
 LXDE gvfs-smb
 LXDE lxappearance-gtk3
-LXDE obconf
+LXDE lxappearance-obconf-gtk3
 LXDE lxde-common
 LXDE lxde-icon-theme
 LXDE lxhotkey-gtk3
@@ -260,13 +256,17 @@ LXDE lxsession-gtk3
 LXDE lxtask-gtk3
 LXDE lxterminal
 LXDE notification-daemon
-LXDE openbox
+lXDE openbox
 LXDE pcmanfm-gtk3
 LXDE lxmusic
 LXDE mpv
 LXDE network-manager-applet
 LXDE xdg-user-dirs-gtk
 LXDE xed
+LXDE arc-gtk-theme-eos
+LXDE eos-settings-lxde
+LXDE eos-lxdm-gtk3
+LXDE eos-qogir-icons
 
 I3WM acpi
 I3WM arandr
