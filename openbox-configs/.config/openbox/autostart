@@ -1,0 +1,31 @@
+# compositor - background process + disable shadowing effects during session
+#picom -CGb &
+# edit: (27 nov. 2022) picom now starts automatic vie xdg autostart (dex is enabled here) 
+# it will read config under:
+# ~/.config/picom.conf  see ~/.config/picom.conf.example for reference or copy default one there 
+# and edit to your needs:
+# cp /etc/xdg/picom.conf.example ~/.config/picom.conf
+
+# notifications
+/usr/bin/dunst &
+
+# panel - taskbar, system tray, battery, clock
+tint2 &
+
+# network manager
+nm-applet &
+
+# Autostart
+#dex -a -s /etc/xdg/autostart/:~/.config/autostart/ &
+
+# Set display from arandr saved script
+sh ~/.screenlayout/monitor.sh &
+
+# Polkit
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
+# Wallpaper
+sleep 1 && feh --bg-fill /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png &
+
+# Low battery notifier
+~/.config/openbox/scripts/low_bat_notifier.sh &

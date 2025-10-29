@@ -68,6 +68,7 @@ _copy_stuff_for_chroot() {
     cp $WORKDIR/smb.conf /mnt/home/alarm
     cp $WORKDIR/lsb-release /mnt/home/alarm
     cp $WORKDIR/os-release /mnt/home/alarm
+    cp -R $WORKDIR/openbox-configs /mnt/root
     case $PLATFORM in
       RPi4 | ServRPi)     cp $WORKDIR/rpi4-config.txt /mnt/home/alarm ;;
       RPi5)               cp $WORKDIR/rpi4-config.txt /mnt/home/alarm

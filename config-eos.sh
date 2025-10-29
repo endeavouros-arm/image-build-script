@@ -422,7 +422,7 @@ _user_input() {
                "5" "Mate" \
                "6" "Budgie" \
                "7" "LXQT" \
-               "8" "LXDE" \
+               "8" "LXDE & Openbox (Experimental)" \
                "9" "i3wm" \
               3>&2 2>&1 1>&3)
 
@@ -453,17 +453,17 @@ _user_input() {
 }   # end of function _user_input
 
 _desktop_setup() {
-    # rm /etc/pacman.d/endeavouros-mirrorlist.pacnew
-    eos-rankmirrors
+    # eos-rankmirrors
+    eos-rankmirrors --ignore hacktegic,funami,leitecastro,sjtu,c0urier # for testing
     if [ "$DENAME" == "NONE" ]; then
         printf "${CYAN}Updating Base Packages${NC}}\n\n"
         pacman -Syyu --noconfirm
     else
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
-        DeviceName=$(fastfetch | grep Host: | awk '{print $2}')
-        if [ "$DeviceName" == "Hardkernel" ] && [ "$DENAME" == "PLASMA" ]; then
-           printf "plasma-x11-session\nkwin-x11\n" >> packages
-        fi
+#        DeviceName=$(fastfetch | grep Host: | awk '{print $2}')
+#        if [ "$DeviceName" == "Hardkernel" ] && [ "$DENAME" == "PLASMA" ]; then
+#           printf "plasma-x11-session\nkwin-x11\n" >> packages
+#        fi
         printf "${CYAN}Installing $DENAME${NC}\n\n"
         pacman -Syyu --needed --noconfirm - < packages
         rm packages
@@ -478,7 +478,7 @@ _desktop_setup() {
        PLASMA | LXQT) systemctl enable sddm.service ;;
        GNOME) systemctl enable gdm ;;
        XFCE4 | CINNAMON | MATE | BUDGIE | I3WM) systemctl enable lightdm ;;
-       LXDE)  systemctl enable lxdm ;;
+       LXDE)  systemctl enable lightdm ;;
     esac
 }   # end of function _desktop_setup
 
@@ -526,7 +526,7 @@ _server_setup() {
     fi
 
     sleep 3
-    pacman -Syu --noconfirm yay # pahis eos-rankmirrors
+    pacman -Syu --noconfirm yay # pahis
 }   # end of function _server_setup
 
 
@@ -581,7 +581,6 @@ Main() {
     else
        _server_setup
     fi
-#    eos-rankmirrors
 
     if [ "$DENAME" == "XFCE4" ]; then
        cp /root/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/
@@ -590,10 +589,17 @@ Main() {
        cp /root/xfce4-backgrounds/eos-wallpaper-3.png /usr/share/backgrounds/xfce/
        cp /root/xfce4-backgrounds/eos-wallpaper-4.png /usr/share/backgrounds/xfce/
     fi
+
     rm /root/xfce4-desktop.xml
     rm -rf /root/xfce4-backgrounds
     _change_user_alarm   # remove user alarm and create new user of choice
 
+    if [ "$DENAME" == "LXDE" ]; then
+       cp -R /root/openbox-configs/.config /home/$USERNAME/
+       cp -R /root/openbox-configs/.themes /home/$USERNAME
+       cp -R /root/openbox-configs/.gtkrc-2.0 /home/$USERNAME
+    fi
+    rm -r /root/openbox-configs
     systemctl disable resize-fs.service
     rm /etc/systemd/system/resize-fs.service
     rm /root/resize-fs.service
@@ -605,6 +611,10 @@ Main() {
     if [ "$DENAME" == "LXQT" ]; then
        cp /root/lxqt_instructions.txt /home/$USERNAME/
     fi
+#    if [ "$DENAME" == "LXDE" ]; then
+#       printf "/home/$USERNAME/.fehbg\n" >> /home/$USERNAME/.config/lxsession/LXDE/autostart
+#       feh --bg-fill /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
+#    fi
     rm /root/lxqt_instructions.txt
     _completed_notification
     if [ "$DENAME" == "LXQT" ]; then
