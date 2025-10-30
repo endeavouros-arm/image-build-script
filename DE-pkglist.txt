@@ -28,7 +28,7 @@ PLASMA konsole
 PLASMA kscreen
 PLASMA kwallet-pam
 PLASMA kwayland-integration
-PLASMA libappindicator-gtk3
+PLASMA libappindicator
 PLASMA maliit-keyboard
 PLASMA okular
 PLASMA plasma-browser-integration
@@ -331,7 +331,6 @@ I3WM i3status
 I3WM jq
 I3WM lightdm
 I3WM lightdm-slick-greeter
-I3WM lxappearance-gtk3
 I3WM mpv
 I3WM network-manager-applet
 I3WM numlockx
