@@ -18,18 +18,9 @@ _finish_up() {
     sed -i 's| Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo|# Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
 
     rm /root/script-image-chroot.sh
-#    rm /root/platformname
-#    case $PLATFORM in
-#       ServRPi | Servodn) cp /home/alarm/config-server.service /etc/systemd/system/
-#                          chmod +x /root/config-server.sh
-#                          systemctl enable config-server.service
-#                          ;;
-#      *)
-                          cp /home/alarm/config-eos.service /etc/systemd/system/
-                          chmod +x /root/config-eos.sh
-                          systemctl enable config-eos.service
-#                          ;;
-#    esac
+    cp /home/alarm/config-eos.service /etc/systemd/system/
+    chmod +x /root/config-eos.sh
+    systemctl enable config-eos.service
     cp /home/alarm/lsb-release /etc/
     cp /home/alarm/os-release /etc/
     sed -i 's/Arch/EndeavourOS/g' /etc/issue

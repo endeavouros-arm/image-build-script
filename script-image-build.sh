@@ -51,18 +51,11 @@ _partition_RPi4() {
 _copy_stuff_for_chroot() {
     mkdir /mnt/home/alarm
     cp $WORKDIR/script-image-chroot.sh /mnt/root/
-#    case $PLATFORM in
-#       ServRPi | Servodn) cp $WORKDIR/config-server.sh /mnt/root/
-#                          cp $WORKDIR/config-server.service /mnt/home/alarm/
-#                          ;;
-#       *)
-                          cp $WORKDIR/config-eos.sh /mnt/root/
-                          cp $WORKDIR/config-eos.service /mnt/home/alarm/
-                          cp $WORKDIR/lxqt_instructions.txt /mnt/root
-                          cp $WORKDIR/xfce4-desktop.xml /mnt/root
-                          cp -R $WORKDIR/xfce4-backgrounds /mnt/root
-#                          ;;
-#    esac
+    cp $WORKDIR/config-eos.sh /mnt/root/
+    cp $WORKDIR/config-eos.service /mnt/home/alarm/
+    cp $WORKDIR/lxqt_instructions.txt /mnt/root
+    cp $WORKDIR/xfce4-desktop.xml /mnt/root
+    cp -R $WORKDIR/xfce4-backgrounds /mnt/root
     cp $WORKDIR/resize-fs.service /mnt/root
     cp $WORKDIR/resize-fs.sh /mnt/root
     cp $WORKDIR/DE-pkglist.txt /mnt/root
@@ -82,7 +75,7 @@ _copy_stuff_for_chroot() {
     fi
     printf "$PLATFORM\n" > platformname
     cp platformname /mnt/root/
-#    rm platformname
+    rm platformname
 #    printf "$TYPE\n" > type
 #    cp type /mnt/root/
 #    rm type
