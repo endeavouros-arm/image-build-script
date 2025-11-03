@@ -18,19 +18,18 @@ _finish_up() {
     sed -i 's| Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo|# Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
 
     rm /root/script-image-chroot.sh
-    rm /root/platformname
-#    rm /home/alarm/smb.conf
-#    rm /root/type
-    case $PLATFORM_NAME in
-       ServRPi | Servodn) cp /home/alarm/config-server.service /etc/systemd/system/
-                          chmod +x /root/config-server.sh
-                          systemctl enable config-server.service
-                          ;;
-      *)                  cp /home/alarm/config-eos.service /etc/systemd/system/
+#    rm /root/platformname
+#    case $PLATFORM in
+#       ServRPi | Servodn) cp /home/alarm/config-server.service /etc/systemd/system/
+#                          chmod +x /root/config-server.sh
+#                          systemctl enable config-server.service
+#                          ;;
+#      *)
+                          cp /home/alarm/config-eos.service /etc/systemd/system/
                           chmod +x /root/config-eos.sh
                           systemctl enable config-eos.service
-                          ;;
-    esac
+#                          ;;
+#    esac
     cp /home/alarm/lsb-release /etc/
     cp /home/alarm/os-release /etc/
     sed -i 's/Arch/EndeavourOS/g' /etc/issue
@@ -47,7 +46,7 @@ _finish_up() {
 ######################   Start of Script   #################################
 Main() {
 
-    PLATFORM_NAME=" "
+    PLATFORM=" "
 #    TYPE=" "
 
    # Declare color variables
@@ -61,7 +60,7 @@ Main() {
 
    # read in platformname passed by script-image-build.sh
    file="/root/platformname"
-   read -d $'\x04' PLATFORM_NAME < "$file"
+   read -d $'\x04' PLATFORM < "$file"
 #   file="/root/type"
 #   read -d $'\x04' TYPE < "$file"
 
@@ -70,7 +69,7 @@ Main() {
    sed -i 's|#Color|Color\nILoveCandy|g' /etc/pacman.conf
    sed -i 's|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g' /etc/pacman.conf
    sed -i '/^\[core\].*/i [endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
-   if [ "$PLATFORM_NAME" == "Radxa5b" ]; then  
+   if [ "$PLATFORM" == "Radxa5b" ]; then
       printf "\n\n[7Ji]\nSigLevel = Never\nServer = https://github.com/7Ji/archrepo/releases/download/$arch\n" >> /etc/pacman.conf
    fi
 #   useradd -p "alarm" -G users -s /bin/bash -u 1000 "alarm"
@@ -88,17 +87,15 @@ Main() {
    sed -i 's|# Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo| Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
    sed -i 's|# Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo| Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
 
-   case $PLATFORM_NAME in
+   case $PLATFORM in
      RPi4 | RPi5 | ServRPi) cp /boot/config.txt /boot/config.txt.orig
                             cp /home/alarm/rpi4-config.txt /boot/config.txt ;;
 #     Radxa5b) mkinitcpio -P ;;
    esac
 
-#   if [ "$TYPE" == "Image" ]; then
-      cp /root/resize-fs.service /etc/systemd/system/
-      chmod +x /root/resize-fs.sh
-      systemctl enable resize-fs.service
-#   fi
+   cp /root/resize-fs.service /etc/systemd/system/
+   chmod +x /root/resize-fs.sh
+   systemctl enable resize-fs.service
 
    mkdir -p /etc/samba
    cp /home/alarm/smb.conf /etc/samba/

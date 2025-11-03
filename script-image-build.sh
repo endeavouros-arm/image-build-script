@@ -51,24 +51,26 @@ _partition_RPi4() {
 _copy_stuff_for_chroot() {
     mkdir /mnt/home/alarm
     cp $WORKDIR/script-image-chroot.sh /mnt/root/
-    case $PLATFORM in
-       ServRPi | Servodn) cp $WORKDIR/config-server.sh /mnt/root/
-                          cp $WORKDIR/config-server.service /mnt/home/alarm/
-                          ;;
-       *)                 cp $WORKDIR/config-eos.sh /mnt/root/
+#    case $PLATFORM in
+#       ServRPi | Servodn) cp $WORKDIR/config-server.sh /mnt/root/
+#                          cp $WORKDIR/config-server.service /mnt/home/alarm/
+#                          ;;
+#       *)
+                          cp $WORKDIR/config-eos.sh /mnt/root/
                           cp $WORKDIR/config-eos.service /mnt/home/alarm/
                           cp $WORKDIR/lxqt_instructions.txt /mnt/root
                           cp $WORKDIR/xfce4-desktop.xml /mnt/root
                           cp -R $WORKDIR/xfce4-backgrounds /mnt/root
-                          ;;
-    esac
+#                          ;;
+#    esac
     cp $WORKDIR/resize-fs.service /mnt/root
     cp $WORKDIR/resize-fs.sh /mnt/root
     cp $WORKDIR/DE-pkglist.txt /mnt/root
+    cp -R $WORKDIR/openbox-configs /mnt/root
     cp $WORKDIR/smb.conf /mnt/home/alarm
     cp $WORKDIR/lsb-release /mnt/home/alarm
     cp $WORKDIR/os-release /mnt/home/alarm
-    cp -R $WORKDIR/openbox-configs /mnt/root
+
     case $PLATFORM in
       RPi4 | ServRPi)     cp $WORKDIR/rpi4-config.txt /mnt/home/alarm ;;
       RPi5)               cp $WORKDIR/rpi4-config.txt /mnt/home/alarm
@@ -80,7 +82,7 @@ _copy_stuff_for_chroot() {
     fi
     printf "$PLATFORM\n" > platformname
     cp platformname /mnt/root/
-    rm platformname
+#    rm platformname
 #    printf "$TYPE\n" > type
 #    cp type /mnt/root/
 #    rm type
@@ -432,7 +434,7 @@ _read_options() {
 Main() {
     # VARIABLES
     PLAT=" "
-    PLATFORM=" "     # e.g. OdroidN2, RPi4, etc.
+    PLATFORM=" "     # e.g. OdroidN2, rpi4, ServRPi, etc.
     DEVICENAME=" "   # storage device name e.g. /dev/sda
     DEVICESIZE="1"
     PARTNAME1=" "
