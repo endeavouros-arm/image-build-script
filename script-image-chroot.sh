@@ -38,7 +38,6 @@ _finish_up() {
 Main() {
 
     PLATFORM=" "
-#    TYPE=" "
 
    # Declare color variables
       GREEN='\033[0;32m'
@@ -52,11 +51,9 @@ Main() {
    # read in platformname passed by script-image-build.sh
    file="/root/platformname"
    read -d $'\x04' PLATFORM < "$file"
-#   file="/root/type"
-#   read -d $'\x04' TYPE < "$file"
+
 
    _check_if_root
-#   sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
    sed -i 's|#Color|Color\nILoveCandy|g' /etc/pacman.conf
    sed -i 's|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g' /etc/pacman.conf
    sed -i '/^\[core\].*/i [endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n' /etc/pacman.conf
@@ -70,9 +67,6 @@ Main() {
    echo "root:root" | chpasswd -c SHA256
    printf "alarm ALL=(ALL:ALL) NOPASSWD: ALL\n" >> /etc/sudoers
    gpasswd -a alarm wheel
-#   chown alarm:alarm /home/alarm/.xinitrc
-#   chmod 644 /home/alarm/.xinitrc
-#   pwconv
 
    sed -i 's| Server = http://mirror.archlinuxarm.org/$arch/$repo|# Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
    sed -i 's|# Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo| Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist

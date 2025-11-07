@@ -76,9 +76,6 @@ _copy_stuff_for_chroot() {
     printf "$PLATFORM\n" > platformname
     cp platformname /mnt/root/
     rm platformname
-#    printf "$TYPE\n" > type
-#    cp type /mnt/root/
-#    rm type
 }   #  end of function _copy_stuff_for_chroot
 
 _fstab_uuid() {
@@ -106,7 +103,6 @@ _install_Radxa5b_image() {
     _copy_stuff_for_chroot
     cp -r rk3588-boot/extlinux /mnt/boot/
     cp -r rk3599-boot/dtbs /mnt/boot
-#    _fstab_uuid
     # change extlinux.conf to UUID instead of partition label.
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
     uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
@@ -123,7 +119,6 @@ _install_Pinebook_image() {
 
     pacstrap -cGM /mnt - < ARM-pkglist.txt
     _copy_stuff_for_chroot
-#    cp -r extlinux /mnt/boot/
     _fstab_uuid
     # change extlinux.conf to UUID instead of partition label.
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
@@ -139,11 +134,6 @@ _install_Pinebook_image() {
         ext4)  sed -i "s#$old#$uuidno#" /mnt/boot/extlinux/extlinux.conf
                ;;
     esac
-
-
-
-#    old=$(grep 'root=' /mnt/boot/extlinux/extlinux.conf | awk '{print $5}')
-#    sed -i "s#$old#$uuidno#" /mnt/boot/extlinux/extlinux.conf
 }   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
@@ -161,8 +151,6 @@ _install_OdroidN2_image() {
     # change boot.ini to UUID instead of partition label.
     partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
     uuidno="\"root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
-    # uuidno should now be "root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
-#    old=$(grep 'root=' mnt/boot/boot.ini | awk '{print $3}')
     case $FORMAT in
         btrfs) boot_options=" rootwait rw fsck.repair=no\""
                new="setenv bootargs "$uuidno"$boot_options"
@@ -175,7 +163,6 @@ _install_OdroidN2_image() {
                sed -i "s/^setenv bootargs \"root=.*/$new/" /mnt/boot/boot.ini
                ;;
     esac
-#    sed -i "s#$old#$uuidno#" /mnt/boot/boot.ini
 }   # End of function _install_OdroidN2_image
 
 
@@ -241,11 +228,8 @@ _partition_format_mount() {
    case $FORMAT in
         ext4)  mkfs.ext4 -F -L ROOT_ENOS $PARTNAME2
                mount $PARTNAME2 /mnt
-#               if [ "$PLATFORM" != "Radxa5b" ]; then
-#               mount $PARTNAME1 /mnt/boot
                mkdir /mnt/boot
                mount $PARTNAME1 /mnt/boot
-#               fi
                ;;
         btrfs) mkfs.btrfs -f -L ROOT_ENOS $PARTNAME2
                mkdir /mnt/boot
@@ -410,8 +394,6 @@ _read_options() {
          *) FORMAT="ext4" ;;
     esac
 
-#     TYPE="Image"
-
     case $CRE in
          y) CREATE=true ;;
          n) CREATE=false ;;
@@ -482,14 +464,6 @@ Main() {
 #      Radxa5b) mv /mnt/boot/* //mnt/root ;;
     esac
 
-#    if $CREATE ; then
-#       if [ "$TYPE" == "Rootfs" ]; then
-#            printf "\n\n${CYAN}Creating Rootfs${NC}\n\n"
-#            _create_rootfs
-#            printf "\n\n${CYAN}Created Rootfs${NC}\n\n"
-#       fi
-#    fi
-
    if [ "$FORMAT" == "btrfs" ]; then
        umount /mnt/home /mnt/var/log /mnt/var/cache
 
@@ -515,11 +489,9 @@ Main() {
     losetup -d /dev/loop0
 
     if $CREATE ; then
-#        if [ "$TYPE" == "Image" ]; then
-            printf "\n${CYAN}Creating Image${NC}\n"
-            _create_image
-            printf "\n${CYAN}Created Image${NC}\n\n"
-#        fi
+       printf "\n${CYAN}Creating Image${NC}\n"
+       _create_image
+       printf "\n${CYAN}Created Image${NC}\n\n"
     fi
 
 #    losetup -d /dev/loop0

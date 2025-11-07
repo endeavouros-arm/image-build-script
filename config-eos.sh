@@ -647,17 +647,11 @@ _desktop_setup() {
         pacman -Syyu --noconfirm
     else
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
-#        DeviceName=$(fastfetch | grep Host: | awk '{print $2}')
-#        if [ "$DeviceName" == "Hardkernel" ] && [ "$DENAME" == "PLASMA" ]; then
-#           printf "plasma-x11-session\nkwin-x11\n" >> packages
-#        fi
         printf "${CYAN}Installing $DENAME${NC}\n\n"
         pacman -Syyu --needed --noconfirm - < packages
         rm packages
     fi
     if [ "$DENAME" == "LXQT" ]; then
-#        rm /usr/share/xsessions/openbox.desktop /usr/share/xsessions/openbox-kde.desktop
-#        rm /usr/share/xsessions/plasmax11.desktop /usr/share/wayland-sessions/plasma.desktop
         sed -i 's/Name=LXQt Desktop/Name=LXQT Desktop x11/g' /usr/share/xsessions/lxqt.desktop
         sed -i 's/Name=LXQt (Wayland)/Name=LXQT Desktop Wayland/g' /usr/share/wayland-sessions/lxqt-wayland.desktop
     fi
@@ -670,8 +664,6 @@ _desktop_setup() {
 }   # end of function _desktop_setup
 
 _server_setup() {
-#    _change_user_alarm    # remove user alarm and create new user of choice
-
     # create static IP with user supplied static IP
     printf "\n${CYAN}Creating configuration file for static IP address...${NC}"
     wiredconnection=$(nmcli con | grep "Wired" | awk '{print $1, $2, $3}')
@@ -804,10 +796,6 @@ Main() {
     if [ "$DENAME" == "LXQT" ]; then
        cp /root/lxqt_instructions.txt /home/$USERNAME/
     fi
-#    if [ "$DENAME" == "LXDE" ]; then
-#       printf "/home/$USERNAME/.fehbg\n" >> /home/$USERNAME/.config/lxsession/LXDE/autostart
-#       feh --bg-fill /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
-#    fi
     rm /root/lxqt_instructions.txt
     _completed_notification
     if [ "$DENAME" == "LXQT" ]; then
