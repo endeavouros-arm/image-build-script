@@ -17,6 +17,24 @@ generate_timezone_list() {
 	fi
 }
 
+_offer_wifi(){
+    # offer to connect to WiFi
+    whiptail  --title "EndeavourOS ARM Setup - Connect to WiFi"  --yesno --yes-button "No" --no-button "Yes" "           If no wired ethernet connection is available you need\n            to connect to WiFi with a network SSID and password.\n\n                     Do you wish to connect to WiFi? \n\n" 10 80 15 3>&2 2>&1 1>&3
+    if [ "$?" == "1" ]; then
+    nmtui-connect
+    fi
+}  # end of _offer_wifi
+
+_offer_bluetooth() {
+    # offer to enable bluetooth
+    whiptail  --title "EndeavourOS ARM Setup - Enable Bluetooth"  --yesno --yes-button "No" --no-button "Yes" "                     Bluetooth is disabled by default\n                    on RPi 4b, RPi 5, and Pinebook Pro. \n\n                     Do you wish to enable Bluetooth? \n\n" 11 80 15 3>&2 2>&1 1>&3
+    if [ "$?" == "1" ]; then
+       sed -i 's/dtoverlay=disable-bt/# dtoverlay=disable-bt/g' /boot/config.txt
+       systemctl enable bluetooth
+       whiptail  --title "EndeavourOS ARM Setup - Bluetooth enabled"  --msgbox "                Bluetooth has been enabled in /boot/config.txt\n               See more on the EndeavourOS WiKi bluetooth page.\n          https://discovery.endeavouros.com/audio/bluetooth/2021/03/ \n\n" 10 80 15 3>&2 2>&1 1>&3
+    fi
+}   # end of _offer_bluetooth
+
 _edit_mirrorlist() {
     local user_confirmation
     local changes
@@ -27,7 +45,7 @@ _edit_mirrorlist() {
     local file
     local str
 
-    whiptail  --title "EndeavourOS ARM Setup - mirrorlist"  --yesno "     Mirrorlist uses a Geo-IP based mirror selection and load balancing.\n     Do you wish to override this and choose mirrors near you?\n\n" 8 80 3>&2 2>&1 1>&3
+    whiptail  --title "EndeavourOS ARM Setup - mirrorlist"  --yesno "\n     Mirrorlist uses a Geo-IP based mirror selection and load balancing.\n          Do you wish to override this and choose mirrors near you?\n\n" 10 80 3>&2 2>&1 1>&3
     user_confirmation=$?
     changes=0
     while [ "$user_confirmation" == "0" ]
@@ -35,7 +53,7 @@ _edit_mirrorlist() {
         tail -n +11 /etc/pacman.d/mirrorlist | grep -e ^"###" -e ^"# S" -e^"  S"  > tmp-mirrorlist
         readarray -t mirrors < tmp-mirrorlist
 
-        mirror1=$(whiptail --cancel-button 'Done' --notags --title "EndeavourOS ARM Setup - Mirror Selection" --menu  \ "Please choose a mirror to enable.\n Only choose lines starting with: \"# Server\" or \"  Server\"\n The chosen item will be toggled between commented and uncommented.\n Note: You can navigate to different sections with Page Up/Down keys.\n When finished selecting, press right arrow key twice" 30 80 18 \
+        mirror1=$(whiptail --cancel-button 'Done' --notags --title "EndeavourOS ARM Setup - Mirror Selection" --menu "\n Please choose a mirror to enable.\n Only choose lines starting with: \"# Server\" or \"  Server\"\n Enter will toggle the chosen item between commented and uncommented.\n Note: You can navigate to different sections with Page Up/Down keys.\n When finished selecting, press right arrow key twice" 34 80 20 \
            "${mirrors[0]}" "${mirrors[0]}" \
            "${mirrors[1]}" "${mirrors[1]}" \
            "${mirrors[2]}" "${mirrors[2]}" \
@@ -104,11 +122,11 @@ _enable_paralleldownloads() {
     local numdwn
     local new
 
-    whiptail  --title "EndeavourOS ARM Setup - Parallel Downloads"  --yesno "             By default, pacman has Parallel Downloads disabled.\n             Do you wish to enable Parallel Downloads?\n\n" 8 80 15 3>&2 2>&1 1>&3
+    whiptail  --title "EndeavourOS ARM Setup - Parallel Downloads"  --yesno "             By default, pacman has Parallel Downloads disabled.\n                  Do you wish to enable Parallel Downloads?\n\n" 8 80 15 3>&2 2>&1 1>&3
 
     user_confirmation=$?
     if [ "$user_confirmation" == "0" ]; then
-       numdwn=$(whiptail --title "EndeavourOS ARM Setup - Parallel Downloads" --menu --notags "           When enabled, Pacman has 5 Parallel Downloads as a default.\n           How many Parallel Downloads do you wish? \n\n" 20 80 10 \
+       numdwn=$(whiptail --title "EndeavourOS ARM Setup - Parallel Downloads" --menu --notags "\n           When enabled, Pacman has 5 Parallel Downloads as a default.\n                  How many Parallel Downloads do you wish? \n\n" 22 80 9 \
          "2" " 2 Parallel Downloads" \
          "3" " 3 Parallel Downloads" \
          "4" " 4 Parallel Downloads" \
@@ -127,6 +145,8 @@ _enable_paralleldownloads() {
        sed -i "s|$old|$new|g" /etc/pacman.conf
     fi
 }   # end of function _enable_paralleldownloads
+
+
 
 
 
@@ -413,23 +433,7 @@ _install_ssd() {
     fi
  }  # end of function _check_internet_connection
 
-_offer_wifi(){
-    # offer to connect to WiFi
-    whiptail  --title "EndeavourOS ARM Setup - Connect to WiFi"  --yesno --yes-button "No" --no-button "Yes" "           If no wired ethernet  connection is available you need\n            to connect to WiFi with a network SSID and password.\n\n                     Do you wish to connect     to WiFi? \n\n" 10 80 15 3>&2 2>&1 1>&3
-    if [ "$?" == "1" ]; then
-    nmtui-connect
-    fi
-}  # end of _offer_wifi
 
-_offer_bluetooth() {
-    # offer to enable bluetooth
-    whiptail  --title "EndeavourOS ARM Setup - Enable Bluetooth"  --yesno --yes-button "No" --no-button "Yes" "                     Bluetooth is disabled by default\n                    on RPi 4b, RPi 5, and Pinebook Pro. \n\n                     Do you wish to enable Bluetooth? \n\n" 11 80 15 3>&2 2>&1 1>&3
-    if [ "$?" == "1" ]; then
-       sed -i 's/dtoverlay=disable-bt/# dtoverlay=disable-bt/g' /boot/config.txt
-       systemctl enable bluetooth
-       whiptail  --title "EndeavourOS ARM Setup - Bluetooth enabled"  --msgbox "                Bluetooth has been enabled in /boot/config.txt\n                        See more on the EndeavourOS WiKi bluetooth page.\n          https://discovery.endeavouros.com/audio/bluetooth/2021/03/ \n\n" 10 80 15 3>&2 2>&1 1>&3
-    fi
-}   # end of _offer_bluetooth
 
 
 _user_input() {
@@ -441,58 +445,58 @@ _user_input() {
     local lasttriad
     local xyz
 
-    userinputdone=1
-    while [ $userinputdone -ne 0 ]
-    do
-        case $PLATFORM in
+    case $PLATFORM in
             RPi4 | RPi5 | Pinebook)
               _offer_wifi
               _offer_bluetooth ;;
-        esac
-       _edit_mirrorlist
-       _enable_paralleldownloads
+    esac
+    _edit_mirrorlist
+    _enable_paralleldownloads
 
+    userinputdone=1
+    while [ $userinputdone -ne 0 ]
+    do
        generate_timezone_list $ZONE_DIR
        TIMEZONE=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Timezone Selection" --menu \
-       "Please choose your timezone.\n\nNote: You can navigate to different sections with Page Up/Down or the A-Z keys." 18 90 8 --cancel-button 'Back' "${TIMEZONE_LIST[@]}" 3>&2 2>&1 1>&3)
+       "\nPlease choose your timezone.\nNote: You can navigate to different sections with Page Up/Down or the A-Z keys." 25 85 14 --cancel-button 'Back' "${TIMEZONE_LIST[@]}" 3>&2 2>&1 1>&3)
        TIMEZONEPATH="${ZONE_DIR}${TIMEZONE}"
 
        finished=1
-       description="Enter your desired hostname"
+       description="\nEnter your desired hostname"
        while [ $finished -ne 0 ]
        do
   	      HOSTNAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Configuration" --inputbox "$description" 8 60 3>&2 2>&1 1>&3)
           if [ "$HOSTNAME" == "" ]
           then
-	 	    description="Host name cannot be blank. Enter your desired hostname"
+	 	    description="\n Host name cannot be blank. Enter your desired hostname"
           else
             finished=0
           fi
        done # enter timezone
 
        finished=1
-       description="Enter your full name, i.e. John Doe"
+       description="\nEnter your full name, i.e. John Doe"
        while [ $finished -ne 0 ]
        do
 	      FULLNAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - User Setup" --inputbox "$description" 8 60 3>&2 2>&1 1>&3)
 
           if [ "$FULLNAME" == "" ]
           then
-             description="Entry is blank. Enter your full name"
+             description="\nEntry is blank. Enter your full name"
           else
              finished=0
           fi
        done # enter full name
 
        finished=1
-       description="Enter your desired user name"
+       description="\nEnter your desired user name"
        while [ $finished -ne 0 ]
        do
 	      USERNAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - User Setup" --inputbox "$description" 8 60 3>&2 2>&1 1>&3)
 
           if [ "$USERNAME" == "" ]
           then
-             description="Entry is blank. Enter your desired username"
+             description="\nEntry is blank. Enter your desired username"
           else
              finished=0
           fi
@@ -500,19 +504,19 @@ _user_input() {
 
        finished=1
        initial_user_password=""
-       description="Enter your desired password for ${USERNAME}:"
+       description="\nEnter desired password for $USERNAME"
        while [ $finished -ne 0 ]
        do
-	      USERPASSWD=$(whiptail --nocancel --title "EndeavourOS ARM Setup - User Setup" --passwordbox "$description" 8 60 3>&2 2>&1 1>&3)
+	      USERPASSWD=$(whiptail --nocancel --title "EndeavourOS ARM Setup - User Setup" --passwordbox "$description" 10 60 3>&2 2>&1 1>&3)
 
           if [ "$USERPASSWD" == "" ]; then
-              description="Entry is blank. Enter your desired password"
+              description="\nEntry is blank.\nEnter desired password for $USERNAME"
               initial_user_password=""
           elif [[ "$initial_user_password" == "" ]]; then
               initial_user_password="$USERPASSWD"
-              description="Confirm password:"
+              description="\nConfirm password for $USERNAME"
           elif [[ "$initial_user_password" != "$USERPASSWD" ]]; then
-              description="Passwords do not match.\nEnter your desired password for ${USERNAME}:"
+              description="\nPasswords do not match.\nEnter desired password for $USERNAME"
               initial_user_password=""
           elif [[ "$initial_user_password" == "$USERPASSWD" ]]; then
               finished=0
@@ -521,18 +525,18 @@ _user_input() {
 
        finished=1
        initial_root_password=""
-       description="Enter your desired password for the root user:"
+       description="\nEnter desired password for the root user"
        while [ $finished -ne 0 ]
        do
-	       ROOTPASSWD=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Root User Setup" --passwordbox "$description" 8 60 3>&2 2>&1 1>&3)
+	       ROOTPASSWD=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Root User Setup" --passwordbox "$description" 10 60 3>&2 2>&1 1>&3)
            if [ "$ROOTPASSWD" == "" ]; then
-              description="Entry is blank. Enter your desired password"
+              description="\nEntry is blank. Enter desired password for root user"
               initial_root_password=""
            elif [[ "$initial_root_password" == "" ]]; then
               initial_root_password="$ROOTPASSWD"
-              description="Confirm password:"
+              description="\nConfirm password for root user"
            elif [[ "$initial_root_password" != "$ROOTPASSWD" ]]; then
-              description="Passwords do not match.\nEnter your desired password for the root user:"
+              description="\nPasswords do not match.\nRe-enter desired password for the root user"
               initial_root_password=""
            elif [[ "$initial_root_password" == "$ROOTPASSWD" ]]; then
              finished=0
@@ -551,12 +555,12 @@ _user_input() {
              then
                if [ $SSHPORT -lt 8000 ] || [ $SSHPORT -gt 48000 ]
                then
-                description="Your choice is out of range, try again.\n\nEnter the desired SSH port between 8000 and 48000"
+                description="\nYour choice is out of range, try again.\n\nEnter the desired SSH port between 8000 and 48000"
                 else
                 finished=0
                fi
              else
-                 description="Your choice is not a number, try again.\n\nEnter the desired SSH port between 8000 and 48000"
+                 description="\nYour choice is not a number, try again.\n\nEnter the desired SSH port between 8000 and 48000"
              fi
           done  # enter SSHPORT
 
@@ -576,19 +580,19 @@ _user_input() {
              then
              if [ $lasttriad -lt 120 ] || [ $lasttriad -gt 250 ]
              then
-                description="For the best router compatibility, the last triad should be between 120 and 250\n\nEnter the last triad of the desired static IP address $THREETRIADS\n\nYour choice is out of range. Please try again\n"
+                description="\nFor the best router compatibility, the last triad should be between 120 and 250\n\nEnter the last triad of the desired static IP address $THREETRIADS\n\nYour choice is out of range. Please try again\n"
              else
                    finished=0
              fi
              else
-	         description="For the best router compatibility, the last triad should be between 120 and 250\n\nEnter the last triad of the desired static IP address $THREETRIADS\n\nYour choice is not a number.  Please try again\n"
+	         description="\nFor the best router compatibility, the last triad should be between 120 and 250\n\nEnter the last triad of the desired static IP address $THREETRIADS\n\nYour choice is not a number.  Please try again\n"
              fi
           done # enter last triad of IP address
 
           STATICIP=$THREETRIADS$lasttriad
           STATICIP=$STATICIP"/24"
 
-          whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "              To review, you entered the following information:\n\n \
+          whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "\n              To review, you entered the following information:\n\n \
           Time Zone: $TIMEZONE \n \
           Host Name: $HOSTNAME \n \
           Full Name: $FULLNAME \n \
@@ -599,7 +603,7 @@ _user_input() {
           userinputdone="$?"
 
       else
-          DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n                          Choose which Desktop Environment to install\n\n" 22 100 15 \
+          DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n              Choose which Desktop Environment to install\n\n" 22 75 12 \
                "0" "No Desktop Environment" \
                "1" "KDE Plasma" \
                "2" "Gnome" \
@@ -607,7 +611,7 @@ _user_input() {
                "4" "Cinnamon" \
                "5" "Mate" \
                "6" "Budgie" \
-               "7" "LXQT" \
+               "7" "LXQT & Openbox (Experimental)" \
                "8" "LXDE & Openbox (Experimental)" \
                "9" "i3wm" \
               3>&2 2>&1 1>&3)
@@ -625,7 +629,7 @@ _user_input() {
              9) DENAME="I3WM" ;;
           esac
 
-       whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "              To review, you entered the following information:\n\n \
+       whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "\n              To review, you entered the following information:\n\n \
        Time Zone: $TIMEZONE \n \
        Host Name: $HOSTNAME \n \
        Full Name: $FULLNAME \n \
@@ -634,7 +638,7 @@ _user_input() {
        Is this information correct?" 16 80
        userinputdone="$?"
        fi
-done  # user input finished
+   done  # user input finished
 clear
 }   # end of function _user_input
 
@@ -778,7 +782,7 @@ Main() {
     rm -rf /root/xfce4-backgrounds
     _change_user_alarm   # remove user alarm and create new user of choice
 
-    if [ "$DENAME" == "LXDE" ]; then
+    if [ "$DENAME" == "LXDE" ] || [ "$DENAME" == "LXQT" ]; then
        cp -R /root/openbox-configs/.config /home/$USERNAME/
        cp -R /root/openbox-configs/.themes /home/$USERNAME
        cp -R /root/openbox-configs/.gtkrc-2.0 /home/$USERNAME
