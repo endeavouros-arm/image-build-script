@@ -29,7 +29,6 @@ PLASMA kscreen
 PLASMA kwallet-pam
 PLASMA kwayland-integration
 PLASMA libappindicator
-PLASMA maliit-keyboard
 PLASMA okular
 PLASMA plasma-browser-integration
 PLASMA plasma-desktop
