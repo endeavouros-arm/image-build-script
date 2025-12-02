@@ -651,6 +651,9 @@ _desktop_setup() {
         pacman -Syyu --noconfirm
     else
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
+        if [ "$PLATFORM" == "OdroidN2" ]; then
+           printf "plasma-x11-session\n" >> packages
+        fi
         printf "${CYAN}Installing $DENAME${NC}\n\n"
         pacman -Syyu --needed --noconfirm - < packages
         rm packages
