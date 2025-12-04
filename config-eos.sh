@@ -434,7 +434,59 @@ _install_ssd() {
  }  # end of function _check_internet_connection
 
 
+_odroidn2_desktop() {
+     DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n              Choose which Desktop Environment to install\n\n" 22 75 12 \
+          "0" "No Desktop Environment" \
+          "1" "KDE Plasma     (x11 only)" \
+          "2" "Xfce4          (x11 only)" \
+          "3" "Cinnamon       (Both x11 & Wayland)" \
+          "4" "Mate           (Native x11 only)" \
+          "5" "Budgie         (Native x11 only) " \
+          "6" "LXQT & Openbox (x11 only)" \
+          "7" "LXDE & Openbox (Native x11 only)" \
+          "8" "i3wm           (Native x11 only)" \
+     3>&2 2>&1 1>&3)
 
+          case $DENAME in
+             0) DENAME="NONE" ;;
+             1) DENAME="PLASMA" ;;
+             2) DENAME="XFCE4" ;;
+             3) DENAME="CINNAMON" ;;
+             4) DENAME="MATE" ;;
+             5) DENAME="BUDGIE" ;;
+             6) DENAME="LXQT" ;;
+             7) DENAME="LXDE" ;;
+             8) DENAME="I3WM" ;;
+          esac
+}  # end _odroidn2_desktop
+
+_normal_desktops() {
+     DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n              Choose which Desktop Environment to install\n\n" 22 75 12 \
+          "0" "No Desktop Environment" \
+          "1" "KDE Plasma" \
+          "2" "Gnome" \
+          "3" "Xfce4" \
+          "4" "Cinnamon" \
+          "5" "Mate" \
+          "6" "Budgie" \
+          "7" "LXQT & Openbox (Experimental)" \
+          "8" "LXDE & Openbox (Experimental)" \
+          "9" "i3wm" \
+         3>&2 2>&1 1>&3)
+
+         case $DENAME in
+             0) DENAME="NONE" ;;
+             1) DENAME="PLASMA" ;;
+             2) DENAME="GNOME" ;;
+             3) DENAME="XFCE4" ;;
+             4) DENAME="CINNAMON" ;;
+             5) DENAME="MATE" ;;
+             6) DENAME="BUDGIE" ;;
+             7) DENAME="LXQT" ;;
+             8) DENAME="LXDE" ;;
+             9) DENAME="I3WM" ;;
+     esac
+}  # end _normal_desktops
 
 _user_input() {
     local userinputdone
@@ -603,31 +655,11 @@ _user_input() {
           userinputdone="$?"
 
       else
-          DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n              Choose which Desktop Environment to install\n\n" 22 75 12 \
-               "0" "No Desktop Environment" \
-               "1" "KDE Plasma" \
-               "2" "Gnome" \
-               "3" "Xfce4" \
-               "4" "Cinnamon" \
-               "5" "Mate" \
-               "6" "Budgie" \
-               "7" "LXQT & Openbox (Experimental)" \
-               "8" "LXDE & Openbox (Experimental)" \
-               "9" "i3wm" \
-              3>&2 2>&1 1>&3)
-
-          case $DENAME in
-             0) DENAME="NONE" ;;
-             1) DENAME="PLASMA" ;;
-             2) DENAME="GNOME" ;;
-             3) DENAME="XFCE4" ;;
-             4) DENAME="CINNAMON" ;;
-             5) DENAME="MATE" ;;
-             6) DENAME="BUDGIE" ;;
-             7) DENAME="LXQT" ;;
-             8) DENAME="LXDE" ;;
-             9) DENAME="I3WM" ;;
-          esac
+          if [ "$PLATFORM" == "OdroidN2" ]; then
+             _odroidn2_desktop
+          else
+             _normal_desktops
+          fi
 
        whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "\n              To review, you entered the following information:\n\n \
        Time Zone: $TIMEZONE \n \
@@ -651,7 +683,7 @@ _desktop_setup() {
         pacman -Syyu --noconfirm
     else
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
-        if [ "$PLATFORM" == "OdroidN2" ]; then
+        if [ "$PLATFORM" == "OdroidN2" ] && [ "$DENAME" == "PLASMA" ]; then
            printf "plasma-x11-session\n" >> packages
         fi
         printf "${CYAN}Installing $DENAME${NC}\n\n"
