@@ -224,7 +224,8 @@ _completed_notification() {
     printf "Pressing Ctrl c will exit the script and give a CLI prompt"
     printf "\nto allow the user to use pacman to add additional packages"
     printf "\nor change configs. This will not remove install files from /root\n\n"
-    printf "Press any key exits the script, removes all install files, and reboots the computer.${NC}\n\n"
+    printf "Press any key exits the script, removes all install files, and reboots the computer."
+    printf "\nIn some instances, Ctrl+Alt+Del may be necessary for reboot.${NC}\n\n"
 }
 
 _lxqt_instuctions() {
@@ -840,7 +841,7 @@ Main() {
     if [ "$DENAME" == "LXQT" ]; then
        _lxqt_instuctions
     fi
-    read -n1 x
+    read z
     systemctl reboot
 }  # end of Main
 
