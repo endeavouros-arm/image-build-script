@@ -224,7 +224,7 @@ _completed_notification() {
     printf "Pressing Ctrl c will exit the script and give a CLI prompt"
     printf "\nto allow the user to use pacman to add additional packages"
     printf "\nor change configs. This will not remove install files from /root\n\n"
-    printf "Press any key exits the script, removes all install files, and reboots the computer."
+    printf "Pressing the Enter key exits the script, removes all install files, and reboots the computer."
     printf "\nIn some instances, Ctrl+Alt+Del may be necessary for reboot.${NC}\n\n"
 }
 
@@ -473,6 +473,7 @@ _normal_desktops() {
           "7" "LXQT & Openbox (Experimental)" \
           "8" "LXDE & Openbox (Experimental)" \
           "9" "i3wm" \
+         "10" "Cosmic (Comunity Edition WIP)" \
          3>&2 2>&1 1>&3)
 
          case $DENAME in
@@ -486,6 +487,7 @@ _normal_desktops() {
              7) DENAME="LXQT" ;;
              8) DENAME="LXDE" ;;
              9) DENAME="I3WM" ;;
+            10) DENAME="COSMIC" ;;
      esac
 }  # end _normal_desktops
 
@@ -698,8 +700,8 @@ _desktop_setup() {
     case $DENAME in
        PLASMA | LXQT) systemctl enable sddm.service ;;
        GNOME) systemctl enable gdm ;;
-       XFCE4 | CINNAMON | MATE | BUDGIE | I3WM) systemctl enable lightdm ;;
-       LXDE)  systemctl enable lightdm ;;
+       XFCE4 | CINNAMON | MATE | BUDGIE | LXDE | I3WM) systemctl enable lightdm ;;
+       COSMIC) systemctl enable cosmic-greeter ;;
     esac
 }   # end of function _desktop_setup
 
@@ -841,7 +843,7 @@ Main() {
     if [ "$DENAME" == "LXQT" ]; then
        _lxqt_instuctions
     fi
-    read z
+    read -n 1 z
     systemctl reboot
 }  # end of Main
 
