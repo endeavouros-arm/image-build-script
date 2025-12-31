@@ -123,7 +123,7 @@ XFCE4 xfce4-whiskermenu-plugin
 XFCE4 xfce4-xkb-plugin
 
 CINNAMON arc-gtk-theme-eos
-CINNAMON blueberry
+CINNAMON blueman
 CINNAMON eos-lightdm-slick-theme
 CINNAMON eos-qogir-icons
 CINNAMON eos-settings-cinnamon
@@ -146,13 +146,12 @@ CINNAMON lightdm-slick-greeter
 CINNAMON mpv
 CINNAMON nemo-fileroller
 CINNAMON nemo-image-converter
-CINNAMON nemo-preview
 CINNAMON nemo-share
 CINNAMON x-apps
 CINNAMON xdg-user-dirs-gtk
 
 MATE arc-gtk-theme-eos
-MATE blueberry
+MATE blueman
 MATE eos-settings-mate
 MATE eos-lightdm-slick-theme
 MATE eos-qogir-icons
@@ -196,7 +195,6 @@ BUDGIE lightdm-slick-greeter
 BUDGIE mpv
 BUDGIE nemo
 BUDGIE nemo-fileroller
-BUDGIE nemo-preview
 BUDGIE network-manager-applet
 BUDGIE sushi
 BUDGIE xdg-user-dirs-gtk
