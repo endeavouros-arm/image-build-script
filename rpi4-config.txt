@@ -5,9 +5,9 @@
 initramfs initramfs-linux.img followkernel
 
 # Uncomment some or all of these to enable the optional hardware interfaces
-#dtparam=i2c_arm=on
-#dtparam=i2s=on
-#dtparam=spi=on
+# dtparam=i2c_arm=on
+# dtparam=i2s=on
+# dtparam=spi=on
 
 # Enable audio (loads snd_bcm2835)
 dtparam=audio=on
@@ -42,12 +42,12 @@ disable_overscan=1
 #hdmi_force_hotplug=1
 
 # Uncomment if you want to disable wifi or bluetooth respectively
-#dtoverlay=disable-wifi
+# dtoverlay=disable-wifi
 dtoverlay=disable-bt
 
 # Uncomment this to enable infrared communication.
-#dtoverlay=gpio-ir,gpio_pin=17
-#dtoverlay=gpio-ir-tx,gpio_pin=18
+# dtoverlay=gpio-ir,gpio_pin=17
+# dtoverlay=gpio-ir-tx,gpio_pin=18
 
 # Run as fast as firmware / board allows
 arm_boost=1
