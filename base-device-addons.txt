@@ -17,7 +17,6 @@ Pinebook acpid
 Pinebook libdrm-pinebookpro
 Pinebook linux-eos-arm
 Pinebook linux-eos-arm-headers
-Pinebook pinebookpro-audio
 Pinebook pinebookpro-post-install
 Pinebook towboot-pinebookpro-bin
 Radxa5b linux-aarch64-rockchip-bsp6.1-joshua-git
