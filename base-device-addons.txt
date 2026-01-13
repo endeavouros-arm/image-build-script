@@ -15,8 +15,8 @@ OdroidN2 odroid-n2-post-install
 Pinebook ap6256-firmware
 Pinebook acpid
 Pinebook libdrm-pinebookpro
-Pinebook linux-eos-arm
-Pinebook linux-eos-arm-headers
+Pinebook linux-aarch64
+Pinebook linux-aarch64-headers
 Pinebook pinebookpro-post-install
 Pinebook towboot-pinebookpro-bin
 Radxa5b linux-aarch64-rockchip-bsp6.1-joshua-git
