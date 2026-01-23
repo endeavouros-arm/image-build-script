@@ -37,12 +37,14 @@ PLASMA plasma-firewall
 PLASMA plasma-nm
 PLASMA plasma-pa
 PLASMA plasma-systemmonitor
+PLASMA plasma-wayland-protocols
 PLASMA plasma-workspace
 PLASMA powerdevil
 PLASMA print-manager
 PLASMA sddm
 PLASMA sddm-kcm
 PLASMA spectacle
+PLASMA wayland-protocols
 PLASMA xdg-desktop-portal-kde
 
 GNOME arc-gtk-theme-eos
