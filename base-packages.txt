@@ -37,6 +37,7 @@ eos-rankmirrors
 eos-update-notifier
 ethtool
 exfatprogs
+ex-vi-compat
 fakeroot
 fastfetch
 ffmpegthumbnailer
@@ -130,7 +131,6 @@ unrar
 unzip
 usb_modeswitch
 usbutils
-vi
 vpnc
 welcome
 wget
