@@ -184,7 +184,6 @@ BUDGIE eog
 BUDGIE file-roller
 BUDGIE gedit
 BUDGIE gnome-keyring
-BUDGIE gnome-screenshot
 BUDGIE gnome-terminal
 BUDGIE gvfs
 BUDGIE gvfs-afc
@@ -194,6 +193,7 @@ BUDGIE gvfs-nfs
 BUDGIE gvfs-smb
 BUDGIE lightdm
 BUDGIE lightdm-slick-greeter
+BUDGIE magpie-wm
 BUDGIE mpv
 BUDGIE nemo
 BUDGIE nemo-fileroller

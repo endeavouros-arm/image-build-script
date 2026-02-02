@@ -442,10 +442,9 @@ _odroidn2_desktop() {
           "2" "Xfce4          (x11 only)" \
           "3" "Cinnamon       (Both x11 & Wayland)" \
           "4" "Mate           (Native x11 only)" \
-          "5" "Budgie         (Native x11 only) " \
-          "6" "LXQT & Openbox (x11 only)" \
-          "7" "LXDE & Openbox (Native x11 only)" \
-          "8" "i3wm           (Native x11 only)" \
+          "5" "LXQT & Openbox (x11 only)" \
+          "6" "LXDE & Openbox (Native x11 only)" \
+          "7" "i3wm           (Native x11 only)" \
      3>&2 2>&1 1>&3)
 
           case $DENAME in
@@ -454,10 +453,9 @@ _odroidn2_desktop() {
              2) DENAME="XFCE4" ;;
              3) DENAME="CINNAMON" ;;
              4) DENAME="MATE" ;;
-             5) DENAME="BUDGIE" ;;
-             6) DENAME="LXQT" ;;
-             7) DENAME="LXDE" ;;
-             8) DENAME="I3WM" ;;
+             5) DENAME="LXQT" ;;
+             6) DENAME="LXDE" ;;
+             7) DENAME="I3WM" ;;
           esac
 }  # end _odroidn2_desktop
 
