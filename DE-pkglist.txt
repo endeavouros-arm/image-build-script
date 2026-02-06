@@ -33,7 +33,6 @@ PLASMA okular
 PLASMA plasma-browser-integration
 PLASMA plasma-desktop
 PLASMA plasma-disks
-PLASMA plasma-firewall
 PLASMA plasma-nm
 PLASMA plasma-pa
 PLASMA plasma-systemmonitor
