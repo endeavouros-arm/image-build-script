@@ -44,6 +44,10 @@ ffmpegthumbnailer
 findutils
 firefox
 firewalld
+firewall-config
+firewall-applet
+firewalld-test
+python-firewall
 freetype2
 fsarchiver
 git
