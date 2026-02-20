@@ -178,7 +178,6 @@ BUDGIE budgie-control-center
 BUDGIE budgie-desktop
 BUDGIE budgie-desktop-view
 BUDGIE budgie-extras
-BUDGIE budgie-screensaver
 BUDGIE eog
 BUDGIE file-roller
 BUDGIE gedit
@@ -192,8 +191,8 @@ BUDGIE gvfs-nfs
 BUDGIE gvfs-smb
 BUDGIE lightdm
 BUDGIE lightdm-slick-greeter
-BUDGIE magpie-wm
 BUDGIE mpv
+BUDGIE mutter
 BUDGIE nemo
 BUDGIE nemo-fileroller
 BUDGIE network-manager-applet
