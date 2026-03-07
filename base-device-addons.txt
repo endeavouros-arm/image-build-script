@@ -20,7 +20,7 @@ OdroidN2 linux-eos-arm
 OdroidN2 linux-eos-arm-headers
 OdroidN2 uboot-odroid-n2plus
 OdroidN2 odroid-n2-post-install
-Pinebook ap6256-firmware
+Pinebk ap6256-firmware
 Pinebook acpid
 Pinebook libdrm-pinebookpro
 Pinebook linux-eos-arm
