@@ -406,7 +406,7 @@ COSMIC cosmic-comp
 COSMIC cosmic-files
 COSMIC cosmic-greeter
 COSMIC cosmic-idle
-COSMI cosmic-initial-setup
+COSMIC cosmic-initial-setup
 COSMIC cosmic-launcher
 COSMIC cosmic-notifications
 COSMIC cosmic-osd
@@ -423,4 +423,4 @@ COSMIC cosmic-text-editor
 COSMIC cosmic-wallpapers
 COSMIC cosmic-workspaces
 COSMIC xdg-desktop-portal-cosmic
-COSMI gnome-keyring
+COSMIC gnome-keyring
