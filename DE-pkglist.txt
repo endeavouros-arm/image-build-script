@@ -220,7 +220,6 @@ LXQT pavucontrol-qt
 LXQT print-manager
 LXQT sddm
 LXQT sddm-kcm
-LXQT vlc
 LXQT xscreensaver
 LXQT kwin
 LXQT lxqt-wayland-session
