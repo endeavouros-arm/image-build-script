@@ -656,11 +656,11 @@ _user_input() {
           userinputdone="$?"
 
       else
-          if [ "$PLATFORM" == "OdroidN2" ]; then
-             _odroidn2_desktop
-          else
+#          if [ "$PLATFORM" == "OdroidN2" ]; then
+#             _odroidn2_desktop
+#          else
              _normal_desktops
-          fi
+#          fi
 
        whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "\n              To review, you entered the following information:\n\n \
        Time Zone: $TIMEZONE \n \

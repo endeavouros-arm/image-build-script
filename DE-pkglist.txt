@@ -105,6 +105,7 @@ XFCE4 mousepad
 XFCE4 network-manager-applet
 XFCE4 parole
 XFCE4 ristretto
+XFCE4 swaybg
 XFCE4 thunar-archive-plugin
 XFCE4 thunar-media-tags-plugin
 XFCE4 xdg-user-dirs-gtk
