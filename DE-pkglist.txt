@@ -111,7 +111,6 @@ XFCE4 thunar-media-tags-plugin
 XFCE4 xdg-user-dirs-gtk
 XFCE4 xfce4
 XFCE4 xfce4-battery-plugin
-XFCE4 xfce4-datetime-plugin
 XFCE4 xfce4-mount-plugin
 XFCE4 xfce4-netload-plugin
 XFCE4 xfce4-notifyd
