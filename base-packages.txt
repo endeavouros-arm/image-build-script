@@ -72,7 +72,6 @@ libmd
 libbsd
 libopenraw
 libwnck3
-linux-firmware
 linux-firmware-whence
 logrotate
 lsb-release
