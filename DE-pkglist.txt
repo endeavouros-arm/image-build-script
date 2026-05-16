@@ -1,5 +1,4 @@
 
-PLASMA eos-breeze-sddm
 PLASMA eos-settings-plasma
 PLASMA ark
 PLASMA bluedevil
@@ -33,6 +32,7 @@ PLASMA okular
 PLASMA plasma-browser-integration
 PLASMA plasma-desktop
 PLASMA plasma-disks
+PLASMA plasma-login-manager
 PLASMA plasma-nm
 PLASMA plasma-pa
 PLASMA plasma-systemmonitor
@@ -40,8 +40,6 @@ PLASMA plasma-wayland-protocols
 PLASMA plasma-workspace
 PLASMA powerdevil
 PLASMA print-manager
-PLASMA sddm
-PLASMA sddm-kcm
 PLASMA spectacle
 PLASMA wayland-protocols
 PLASMA xdg-desktop-portal-kde
@@ -310,7 +308,7 @@ LXDE mpv
 LXDE network-manager-applet
 LXDE pcmanfm
 LXDE xdg-user-dirs-gtk
-LXD xed
+#LXDE xed
 LXDE arc-gtk-theme-eos
 LXDE eos-settings-lxde
 LXDE eos-qogir-icons

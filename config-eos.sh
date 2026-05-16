@@ -232,7 +232,7 @@ _lxqt_instuctions() {
    printf "\n####  You have installed LXQT for your desktop ####\n"
    printf "\nWayland is disabled by default, enable Wayland as follows\n"
    printf "\n${RED}After the first boot, do the following:\n"
-   printf "In the sddm screen, in the upper left corner, change \"LXQT Desktop Wayland\" to \"LXQT Desktop x11\"\n"
+   printf "In the login screen, in the upper left corner, change \"LXQT Desktop Wayland\" to \"LXQT Desktop x11\"\n"
    printf "Then login to LXQT.  A window appears asking to select \"KWIN\" or \"Openbox\" choose either one${NC}\n"
    printf "\n${CYAN}Once booted, in the \"Application Launcher\" choose Preferences - Session Settings\n"
    printf "click on \"\Wayland Settings (Experimental)\"icon\n"
@@ -684,9 +684,6 @@ _desktop_setup() {
         pacman -Syyu --noconfirm
     else
         grep -w "$DENAME" /root/DE-pkglist.txt | awk '{print $2}' > packages
-        if [ "$PLATFORM" == "OdroidN2" ] && [ "$DENAME" == "PLASMA" ]; then
-           printf "plasma-x11-session\n" >> packages
-        fi
         printf "${CYAN}Installing $DENAME${NC}\n\n"
         pacman -Syyu --needed --noconfirm - < packages
         rm packages
@@ -696,7 +693,8 @@ _desktop_setup() {
         sed -i 's/Name=LXQt (Wayland)/Name=LXQT Desktop Wayland/g' /usr/share/wayland-sessions/lxqt-wayland.desktop
     fi
     case $DENAME in
-       PLASMA | LXQT) systemctl enable sddm.service ;;
+       PLASMA) systemctl enable plasmalogin ;;
+       LXQT) systemctl enable sddm.service ;;
        GNOME) systemctl enable gdm ;;
        XFCE4 | CINNAMON | MATE | BUDGIE | LXDE | I3WM) systemctl enable lightdm ;;
        COSMIC) systemctl enable cosmic-greeter ;;
