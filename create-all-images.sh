@@ -8,6 +8,6 @@ read -n 1 z
 ./script-image-build.sh -p rpi5
 ./script-image-build.sh -p pbp
 ./script-image-build.sh -p odn
-#./script-image-build.sh -p srpi
-#./script-image-build.sh -p sodn
+./script-image-build.sh -p srpi
+./script-image-build.sh -p sodn
 
