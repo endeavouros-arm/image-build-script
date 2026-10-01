@@ -419,5 +419,6 @@ COSMIC cosmic-terminal
 COSMIC cosmic-text-editor
 COSMIC cosmic-wallpapers
 COSMIC cosmic-workspaces
+COSMIC eos-settings-cosmic
 COSMIC xdg-desktop-portal-cosmic
 COSMIC gnome-keyring
