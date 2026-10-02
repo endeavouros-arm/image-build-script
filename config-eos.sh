@@ -435,30 +435,6 @@ _install_ssd() {
  }  # end of function _check_internet_connection
 
 
-_odroidn2_desktop() {
-     DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n              Choose which Desktop Environment to install\n\n" 22 75 12 \
-          "0" "No Desktop Environment" \
-          "1" "KDE Plasma     (x11 only)" \
-          "2" "Xfce4          (x11 only)" \
-          "3" "Cinnamon       (Both x11 & Wayland)" \
-          "4" "Mate           (Native x11 only)" \
-          "5" "LXQT & Openbox (x11 only)" \
-          "6" "LXDE & Openbox (Native x11 only)" \
-          "7" "i3wm           (Native x11 only)" \
-     3>&2 2>&1 1>&3)
-
-          case $DENAME in
-             0) DENAME="NONE" ;;
-             1) DENAME="PLASMA" ;;
-             2) DENAME="XFCE4" ;;
-             3) DENAME="CINNAMON" ;;
-             4) DENAME="MATE" ;;
-             5) DENAME="LXQT" ;;
-             6) DENAME="LXDE" ;;
-             7) DENAME="I3WM" ;;
-          esac
-}  # end _odroidn2_desktop
-
 _normal_desktops() {
      DENAME=$(whiptail --nocancel --title "EndeavourOS ARM Setup - Desktop Selection" --menu --notags "\n              Choose which Desktop Environment to install\n\n" 22 75 12 \
           "0" "No Desktop Environment" \
@@ -469,7 +445,7 @@ _normal_desktops() {
           "5" "Mate" \
           "6" "Budgie" \
           "7" "LXQT & Openbox (Experimental)" \
-          "8" "LXDE & Openbox (Experimental)" \
+          "8" "Sway WIP" \
           "9" "i3wm" \
          "10" "Cosmic (Comunity Edition WIP)" \
          3>&2 2>&1 1>&3)
@@ -483,7 +459,7 @@ _normal_desktops() {
              5) DENAME="MATE" ;;
              6) DENAME="BUDGIE" ;;
              7) DENAME="LXQT" ;;
-             8) DENAME="LXDE" ;;
+             8) DENAME="SWAY" ;;
              9) DENAME="I3WM" ;;
             10) DENAME="COSMIC" ;;
      esac
