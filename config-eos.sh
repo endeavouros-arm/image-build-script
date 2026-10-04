@@ -445,9 +445,8 @@ _normal_desktops() {
           "5" "Mate" \
           "6" "Budgie" \
           "7" "LXQT & Openbox (Experimental)" \
-          "8" "Sway WIP" \
-          "9" "i3wm" \
-         "10" "Cosmic (Comunity Edition WIP)" \
+          "8" "i3wm" \
+          "9" "Cosmic (Comunity Edition WIP)" \
          3>&2 2>&1 1>&3)
 
          case $DENAME in
@@ -459,9 +458,8 @@ _normal_desktops() {
              5) DENAME="MATE" ;;
              6) DENAME="BUDGIE" ;;
              7) DENAME="LXQT" ;;
-             8) DENAME="SWAY" ;;
-             9) DENAME="I3WM" ;;
-            10) DENAME="COSMIC" ;;
+             8) DENAME="I3WM" ;;
+             9) DENAME="COSMIC" ;;
      esac
 }  # end _normal_desktops
 
