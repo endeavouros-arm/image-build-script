@@ -69,6 +69,7 @@ _copy_stuff_for_chroot() {
       RPi5)               cp $WORKDIR/rpi4-config.txt /mnt/home/alarm
                           cp $WORKDIR/99-vd3.conf /mnt/etc/X11/xorg.conf.d ;;
       OdroidN2 | Servodn) cp $WORKDIR/n2-boot.ini /mnt/home/alarm ;;
+      Pinebook)           cp $WORKDIR/wpa_supplicant-2:2.10-8-aarch64.pkg.tar.xz  /mnt/root ;;
     esac
     if [ "$PLATFORM" == "ServRPi" ]; then 
        sed -i 's/# dtoverlay=disable-wifi/dtoverlay=disable-wifi/g' /mnt/home/alarm/rpi4-config.txt

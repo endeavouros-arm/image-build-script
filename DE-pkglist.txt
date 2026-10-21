@@ -1,5 +1,4 @@
 
-PLASMA eos-settings-plasma
 PLASMA ark
 PLASMA bluedevil
 PLASMA breeze-gtk
@@ -17,7 +16,6 @@ PLASMA kdeconnect
 PLASMA kdegraphics-thumbnailers
 PLASMA kdenetwork-filesharing
 PLASMA kdeplasma-addons
-PLASMA kgamma
 PLASMA kimageformats
 PLASMA kinfocenter
 PLASMA kio-admin
@@ -29,10 +27,13 @@ PLASMA kwallet-pam
 PLASMA kwayland-integration
 PLASMA libappindicator
 PLASMA okular
+PLASMA partitionmanager
 PLASMA plasma-browser-integration
 PLASMA plasma-desktop
 PLASMA plasma-disks
+PLASMA plasma-keyboard
 PLASMA plasma-login-manager
+PLASMA plasma-meta
 PLASMA plasma-nm
 PLASMA plasma-pa
 PLASMA plasma-systemmonitor
@@ -40,9 +41,14 @@ PLASMA plasma-wayland-protocols
 PLASMA plasma-workspace
 PLASMA powerdevil
 PLASMA print-manager
+PLASMA qt6-imageformats
 PLASMA spectacle
 PLASMA wayland-protocols
 PLASMA xdg-desktop-portal-kde
+PLASMA xsettingsd
+PLASMA eos-breeze-sddm
+PLASMA endeavouros-konsole-colors
+PLASMA eos-settings-plasma
 
 GNOME arc-gtk-theme-eos
 GNOME eos-settings-gnome

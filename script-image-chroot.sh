@@ -75,6 +75,8 @@ Main() {
    case $PLATFORM in
      RPi4 | RPi5 | ServRPi) cp /boot/config.txt /boot/config.txt.orig
                             cp /home/alarm/rpi4-config.txt /boot/config.txt ;;
+     Pinebook)              pacman -U --noconfirm /root/wpa_supplicant-2:2.10-8-aarch64.pkg.tar.xz
+                            sed -i 's/#IgnorePkg   =/IgnorePkg = wpa_supplicant/g' /etc/pacman.conf ;;
 #     Radxa5b) mkinitcpio -P ;;
    esac
 
