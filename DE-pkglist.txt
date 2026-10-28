@@ -46,7 +46,7 @@ PLASMA spectacle
 PLASMA wayland-protocols
 PLASMA xdg-desktop-portal-kde
 PLASMA xsettingsd
-PLASMA eos-breeze-sddm
+PLA eos-breeze-sddm
 PLASMA endeavouros-konsole-colors
 PLASMA eos-settings-plasma
 
@@ -473,7 +473,7 @@ COSMIC cosmic-comp
 COSMIC cosmic-files
 COSMIC cosmic-greeter
 COSMIC cosmic-idle
-COSMIC cosmic-initial-setup
+COS cosmic-initial-setup
 COSMIC cosmic-launcher
 COSMIC cosmic-notifications
 COSMIC cosmic-osd
@@ -489,6 +489,6 @@ COSMIC cosmic-terminal
 COSMIC cosmic-text-editor
 COSMIC cosmic-wallpapers
 COSMIC cosmic-workspaces
-COSM eos-settings-cosmic
+COSMIC eos-settings-cosmic
 COSMIC xdg-desktop-portal-cosmic
 COSMIC gnome-keyring
