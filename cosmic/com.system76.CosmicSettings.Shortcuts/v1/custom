@@ -1,0 +1,7 @@
+{
+    (
+        modifiers: [
+            Super,
+        ],
+    ): System(AppLibrary),
+}
