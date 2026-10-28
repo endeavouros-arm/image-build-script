@@ -440,27 +440,27 @@ _normal_desktops() {
           "0" "No Desktop Environment" \
           "1" "KDE Plasma" \
           "2" "Gnome" \
-          "3" "Xfce4" \
+          "3" "Cosmic" \
           "4" "Cinnamon" \
-          "5" "Mate" \
-          "6" "Budgie" \
-          "7" "LXQT & Openbox (Experimental)" \
-          "8" "i3wm" \
-          "9" "Cosmic (Comunity Edition WIP)" \
+          "5" "XFCE 4" \
+          "6" "Mate" \
+          "7" "Budgie" \
+          "8" "LXQT & Openbox (Experimental)" \
+          "9" "i3wm" \
          3>&2 2>&1 1>&3)
 
          case $DENAME in
              0) DENAME="NONE" ;;
              1) DENAME="PLASMA" ;;
              2) DENAME="GNOME" ;;
-             3) DENAME="XFCE4" ;;
+             3) DENAME="COSMIC" ;;
              4) DENAME="CINNAMON" ;;
-             5) DENAME="MATE" ;;
-             6) DENAME="BUDGIE" ;;
-             7) DENAME="LXQT" ;;
-             8) DENAME="I3WM" ;;
-             9) DENAME="COSMIC" ;;
-     esac
+             5) DENAME="XFCE4" ;;
+             6) DENAME="MATE" ;;
+             7) DENAME="BUDGIE" ;;
+             8) DENAME="LXQT" ;;
+             9) DENAME="I3WM" ;;
+        esac
 }  # end _normal_desktops
 
 _user_input() {
@@ -796,12 +796,9 @@ Main() {
        cp -R /root/openbox-configs/.gtkrc-2.0 /home/$USERNAME
     fi
     if [ "$DENAME" == "COSMIC" ]; then
-       printf "\n\nBreakpoint\n\n"
-       read z
-       cp -R /root/cosmic /home/$USERNAME/.config/cosmic
-
+       cp -R /root/cosmic /home/$USERNAME/.config/
     fi
-    rm -rf /root/openbox-configs # /root/cosmic-theme
+    rm -rf /root/openbox-configs /root/cosmic
     systemctl disable resize-fs.service
     rm /etc/systemd/system/resize-fs.service
     rm /root/resize-fs.service
