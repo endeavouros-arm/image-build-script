@@ -795,10 +795,10 @@ Main() {
        cp -R /root/openbox-configs/.themes /home/$USERNAME
        cp -R /root/openbox-configs/.gtkrc-2.0 /home/$USERNAME
     fi
-    if [ "$DENAME" == "COSMIC" ]; then
-       cp -R /root/cosmic /home/$USERNAME/.config/
-    fi
-    rm -rf /root/openbox-configs /root/cosmic
+#    if [ "$DENAME" == "COSMIC" ]; then
+#       cp -R /root/cosmic /home/$USERNAME/.config/
+#    fi
+    rm -rf /root/openbox-configs # /root/cosmic
     systemctl disable resize-fs.service
     rm /etc/systemd/system/resize-fs.service
     rm /root/resize-fs.service
