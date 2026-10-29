@@ -1,25 +1,5 @@
 #!/bin/bash
 
-_partition_Radxa5b() {
-    dd if=/dev/zero of=$DEVICENAME bs=1M count=18
-#    dd if=rk3588-uboot.img of=$DEVICENAME
-#    dd if=rk3588-uboot.img ibs=1 skip=0 count=15728640 of=$DEVICENAME
-#    printf "\n\n${CYAN}46b3dc9b4dd0abc5ed30417eaeaac321${NC}\n"
-#    dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
-#    printf "\nBoth check sums should be the same\n"
-    parted --script -a minimal $DEVICENAME \
-    mklabel gpt \
-    mkpart primary 17MiB 34MiB \
-    mkpart primary 34MiB $DEVICESIZE"MiB" \
-    quit
-
-    dd if=rk3588-uboot-j.bin ibs=1 skip=0 count=15728640 of=$DEVICENAME
-    printf "\n\n${CYAN}cdd31c860ee3a39d315d9f2a8382f8e2${NC}\n"
-    dd if=$DEVICENAME ibs=1 skip=0 count=15728640 | md5sum
-    printf "\n\n${CYAN}Both check sums should be the same.  Then Press Enter.${NC}\n\n"
-    read z
-}
-
 _partition_Pinebook() {
     dd if=/dev/zero of=$DEVICENAME bs=1M count=16
     parted --script -a minimal $DEVICENAME \
@@ -94,24 +74,6 @@ _fstab_uuid() {
     printf "#\n# <file system>             <mount point>  <type>  <options>  <dump>  <pass>\n\n"  >> /mnt/etc/fstab
     printf "$fstabuuid  /boot  vfat  defaults  0  0\n\n" >> /mnt/etc/fstab
 }   # end of fucntion _fstab_uuid
-
-_install_Radxa5b_image() {
-
-    local partition
-    local uuidno
-    local old
-
-    pacstrap -cGM /mnt - < ARM-pkglist.txt
-    _copy_stuff_for_chroot
-    cp -r rk3588-boot/extlinux /mnt/boot/
-    cp -r rk3599-boot/dtbs /mnt/boot
-    # change extlinux.conf to UUID instead of partition label.
-    partition=$(sed 's#\/dev\/##g' <<< $PARTNAME2)
-    uuidno="root=UUID="$(lsblk -o NAME,UUID | grep $partition | awk '{print $2}')
-    # uuidno should now be root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX
-    old=$(grep 'root=' /mnt/boot/extlinux/extlinux.conf | awk '{print $2}')
-    sed -i "s#$old#$uuidno#" /mnt/boot/extlinux/extlinux.conf
-}   # End of function _install_Radxa5b_image
 
 _install_Pinebook_image() {
 
@@ -282,7 +244,6 @@ _create_image(){
        RPi5)     DEVICENAME="rpi5" ;;
        OdroidN2) DEVICENAME="odroid-n2" ;;
        Pinebook) DEVICENAME="pbp" ;;
-       Radxa5b)  DEVICENAME="radxa-5b" ;;
        ServRPi)  DEVICENAME="server-rpi" ;;
        Servodn)  DEVICENAME="server-odroid-n2" ;;
     esac
