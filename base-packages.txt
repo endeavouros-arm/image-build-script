@@ -30,6 +30,7 @@ endeavouros-keyring
 endeavouros-mirrorlist
 endeavouros-branding
 eos-apps-info
+eos-qogir-icons
 eos-hooks
 eos-log-tool
 eos-quickstart
