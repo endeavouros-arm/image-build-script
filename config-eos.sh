@@ -446,7 +446,8 @@ _normal_desktops() {
           "6" "Mate" \
           "7" "Budgie" \
           "8" "LXQT & Openbox (Experimental)" \
-          "9" "i3wm" \
+          "9" "Sway" \
+         "10" "i3wm" \
          3>&2 2>&1 1>&3)
 
          case $DENAME in
@@ -459,7 +460,8 @@ _normal_desktops() {
              6) DENAME="MATE" ;;
              7) DENAME="BUDGIE" ;;
              8) DENAME="LXQT" ;;
-             9) DENAME="I3WM" ;;
+             9) DENAME="SWAY" ;;
+            10) DENAME="I3WM" ;;
         esac
 }  # end _normal_desktops
 
@@ -630,21 +632,17 @@ _user_input() {
           userinputdone="$?"
 
       else
-#          if [ "$PLATFORM" == "OdroidN2" ]; then
-#             _odroidn2_desktop
-#          else
-             _normal_desktops
-#          fi
+         _normal_desktops
 
-       whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "\n              To review, you entered the following information:\n\n \
-       Time Zone: $TIMEZONE \n \
-       Host Name: $HOSTNAME \n \
-       Full Name: $FULLNAME \n \
-       User Name: $USERNAME \n \
-       Desktop:   $DENAME \n\n \
-       Is this information correct?" 16 80
-       userinputdone="$?"
-       fi
+         whiptail --title "EndeavourOS ARM Setup - Review Settings" --yesno "\n              To review, you entered the following information:\n\n \
+         Time Zone: $TIMEZONE \n \
+         Host Name: $HOSTNAME \n \
+         Full Name: $FULLNAME \n \
+         User Name: $USERNAME \n \
+         Desktop:   $DENAME \n\n \
+         Is this information correct?" 16 80
+         userinputdone="$?"
+     fi
    done  # user input finished
 clear
 }   # end of function _user_input
@@ -670,8 +668,9 @@ _desktop_setup() {
        PLASMA) systemctl enable plasmalogin ;;
        LXQT) systemctl enable sddm.service ;;
        GNOME) systemctl enable gdm ;;
-       XFCE4 | CINNAMON | MATE | BUDGIE | LXDE | I3WM) systemctl enable lightdm ;;
+       XFCE4 | CINNAMON | MATE | BUDGIE | I3WM) systemctl enable lightdm ;;
        COSMIC) systemctl enable cosmic-greeter ;;
+       SWAY) systemctl enable greetd ;;
     esac
 }   # end of function _desktop_setup
 
