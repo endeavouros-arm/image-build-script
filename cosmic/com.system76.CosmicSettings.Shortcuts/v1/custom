@@ -1,7 +1,0 @@
-{
-    (
-        modifiers: [
-            Super,
-        ],
-    ): System(AppLibrary),
-}
