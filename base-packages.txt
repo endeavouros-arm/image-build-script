@@ -36,6 +36,7 @@ eos-log-tool
 eos-quickstart
 eos-rankmirrors
 eos-update-notifier
+eos-reboot-recommended
 ethtool
 exfatprogs
 ex-vi-compat
