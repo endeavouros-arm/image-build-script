@@ -794,6 +794,12 @@ Main() {
        cp -R /root/openbox-configs/.themes /home/$USERNAME
        cp -R /root/openbox-configs/.gtkrc-2.0 /home/$USERNAME
     fi
+    if [ "$DENAME" == "SWAY" ]; then
+       cp /root/config.toml /etc/greetd/
+       printf "\ninput type:keyboard xkb_numlock disable\n\n" >> /home/$USERNAME/.config/sway/config
+    else
+       rm /root/config.toml
+    fi
 #    if [ "$DENAME" == "COSMIC" ]; then
 #       cp -R /root/cosmic /home/$USERNAME/.config/
 #    fi

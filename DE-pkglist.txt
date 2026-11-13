@@ -391,11 +391,13 @@ SWAY wl-clipboard
 SWAY xdg-desktop-portal-wlr
 SWAY xdg-desktop-portal-gtk
 SWAY xdg-user-dirs
+SWAY xdg-user-dirs-gtk
 SWAY xed
 SWAY xorg-xwayland
 
 COSMIC cosmic-app-library
 COSMIC cosmic-applets
+COSMIC arc-gtk-theme-eos
 COSMIC cosmic-bg
 COSMIC cosmic-comp
 COSMIC cosmic-files
@@ -420,3 +422,4 @@ COSMIC cosmic-workspaces
 COSMIC eos-settings-cosmic
 COSMIC gnome-keyring
 COSMIC xdg-desktop-portal-cosmic
+COSMIC xdg-user-dirs-gtk

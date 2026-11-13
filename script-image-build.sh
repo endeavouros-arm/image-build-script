@@ -35,6 +35,7 @@ _copy_stuff_for_chroot() {
     cp $WORKDIR/config-eos.service /mnt/home/alarm/
     cp $WORKDIR/lxqt_instructions.txt /mnt/root
     cp $WORKDIR/xfce4-desktop.xml /mnt/root
+    cp $WORKDIR/config.toml /mnt/root
     cp -R $WORKDIR/xfce4-backgrounds /mnt/root
 #    cp -R $WORKDIR/cosmic /mnt/root
     cp $WORKDIR/resize-fs.service /mnt/root
