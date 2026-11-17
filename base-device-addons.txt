@@ -1,3 +1,4 @@
+RPi4 firefox
 RPi4 firmware-raspberrypi
 RPi4 linux-rpi
 RPi4 linux-rpi-headers
@@ -7,6 +8,7 @@ RPi4 linux-firmware
 RPi4 vulkan-broadcom
 RPi4 vulkan-mesa-implicit-layers
 RPi4 vulkan-tools
+RPi5 firefox
 RPi5 firmware-raspberrypi
 RPi5 linux-rpi-16k
 RPi5 linux-rpi-16k-headers
@@ -18,11 +20,13 @@ RPi5 linux-firmware-whence
 RPi5 vulkan-broadcom
 RPi5 vulkan-mesa-implicit-layers
 RPi5 vulkan-tools
+OdroidN2 firefox
 OdroidN2 linux-eos-arm
 OdroidN2 linux-eos-arm-headers
 OdroidN2 linux-firmware
 OdroidN2 uboot-odroid-n2plus
 OdroidN2 odroid-n2-post-install
+Pinebook chromium
 Pinebook libdrm
 Pinebook acpid
 Pinebook linux-eos-arm
@@ -30,9 +34,3 @@ Pinebook linux-eos-arm-headers
 Pinebook linux-firmware
 Pinebook pinebookpro-post-install
 Pinebook towboot-pinebookpro-bin
-Radxa5b linux-aarch64-rockchip-bsp6.1-joshua-git
-Radxa5b linux-aarch64-rockchip-bsp6.1-joshua-git-headers
-Radxa5b linux-firmware-joshua-git
-Radxa5b mesa-utils
-Radxa5b mesa
-

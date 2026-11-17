@@ -44,7 +44,6 @@ fakeroot
 fastfetch
 ffmpegthumbnailer
 findutils
-firefox
 firewalld
 firewall-config
 firewall-applet
