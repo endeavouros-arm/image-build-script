@@ -25,11 +25,13 @@ dhclient
 dmidecode
 dnsmasq
 dosfstools
+downgrade
 duf
 endeavouros-keyring
 endeavouros-mirrorlist
 endeavouros-branding
 eos-apps-info
+eos-downgrade
 eos-qogir-icons
 eos-hooks
 eos-log-tool
